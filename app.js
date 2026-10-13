@@ -10,7 +10,6 @@
   const DAY_KEYS = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu'];
   const DAY_ORDER = { sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thu: 5 };
 
-  // عرض محتوى منطقة الطباعة (بكسل)
   const PRINT_WIDTH = 900;
 
   const I18N = {
@@ -95,6 +94,7 @@
       periodLabelAm: 'صباحًا',
       periodLabelPm: 'مساءً',
       timeFrom: 'من', timeTo: 'إلى', notSpecified: '—',
+      footerText: '© 2026 د. عمر الرواجفة — جميع الحقوق محفوظة',
     },
     en: {
       dir: 'ltr',
@@ -177,6 +177,7 @@
       periodLabelAm: 'AM',
       periodLabelPm: 'PM',
       timeFrom: 'From', timeTo: 'To', notSpecified: '—',
+      footerText: '© 2026 Dr. Omar Al-Rawajfeh — All Rights Reserved',
     }
   };
 
@@ -259,6 +260,7 @@
     confirmNo: $('confirmNo'),
     toast: $('toast'),
     printArea: $('printArea'),
+    footerText: $('footerText'),
   };
 
   function t(key) {
@@ -405,6 +407,8 @@
 
     el.confirmYes.textContent = t('confirmYes');
     el.confirmNo.textContent = t('confirmNo');
+
+    if (el.footerText) el.footerText.textContent = t('footerText');
 
     renderTables();
   }
@@ -663,12 +667,6 @@
     };
   }
 
-  /* =========================================
-     بناء HTML للتصدير (PDF)
-     الترتيب: شعار → جامعة → كلية+قسم → عام+فصل → دكتور
-     جميع أعمدة الجدول مُوسَّطة
-     ========================================= */
-
   function buildPrintHTML() {
     const ac = getAcademicData();
     const isAr = currentLang === 'ar';
@@ -705,7 +703,6 @@
 
     const tableBase = `width:100%;border-collapse:collapse;font-family:${fontFamily};direction:${dir};font-size:10.5pt;table-layout:fixed;`;
     const thStyle = `background:#1b3a6b;color:#fff;padding:5px 8px;font-weight:700;border:1px solid #14305a;font-size:10.5pt;text-align:center;vertical-align:middle;`;
-    const tdStyle = `padding:4px 8px;border:1px solid #c9d3e2;font-size:10.5pt;vertical-align:middle;line-height:1.35;`;
 
     const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
@@ -788,12 +785,6 @@
     </div>`;
   }
 
-  /* =========================================
-     تصدير Word
-     - اتجاه RTL صحيح للجداول والفقرات
-     - جميع الأعمدة مُوسَّطة
-     ========================================= */
-
   function exportToWord() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
 
@@ -841,7 +832,6 @@
         });
       }
 
-      // 1) الشعار
       if (window.__logoBase64 && window.__logoDimensions) {
         try {
           const base64 = window.__logoBase64.split(',')[1];
@@ -861,10 +851,8 @@
         } catch (e) { console.warn('logo embed error:', e); }
       }
 
-      // 2) اسم الجامعة
       children.push(centeredPara([run(t('printUniversity'), 30, { bold: true, color: '1B3A6B' })], { after: 60 }));
 
-      // 3) الكلية + القسم
       children.push(centeredPara([
         run(t('printCollege') + ': ', 22, { bold: true, color: '1B3A6B' }),
         run(ac.collegeName, 22),
@@ -873,7 +861,6 @@
         run(ac.departmentName, 22),
       ], { after: 30 }));
 
-      // 4) العام الدراسي + الفصل (العام أولًا)
       children.push(centeredPara([
         run(t('printYear') + ': ', 22, { bold: true, color: '1B3A6B' }),
         run(ac.academicYear, 22),
@@ -882,18 +869,15 @@
         run(ac.semester, 22),
       ], { after: 30 }));
 
-      // 5) اسم عضو هيئة التدريس
       children.push(centeredPara([
         run(t('printFaculty') + ': ', 22, { bold: true, color: '1B3A6B' }),
         run(ac.facultyName, 22),
       ], { after: 160 }));
 
-      // 6) عنوان الجدول
       children.push(centeredPara([
         run(t('wordTitle'), 26, { bold: true, color: '1B3A6B' }),
       ], { after: 160 }));
 
-      // دالة خلية — جميع الخلايا مُوسَّطة
       function makeCell(text, opts) {
         opts = opts || {};
         return new TableCell({
@@ -916,7 +900,6 @@
         });
       }
 
-      // عنوان جدول المحاضرات
       children.push(new Paragraph({
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
         bidirectional: isAr,
@@ -953,7 +936,6 @@
         rows: [lectureHeader, ...lectureRows],
       }));
 
-      // عنوان جدول الساعات المكتبية
       children.push(new Paragraph({
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
         bidirectional: isAr,
@@ -1013,11 +995,6 @@
     }
   }
 
-  /* =========================================
-     تصدير PDF — html2canvas + jsPDF
-     منطق: صفحة واحدة إذا أمكن، وإلا تقسيم متوازن
-     ========================================= */
-
   function exportToPdf() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
 
@@ -1030,7 +1007,6 @@
     el.printArea.innerHTML = buildPrintHTML();
     const target = el.printArea.firstElementChild;
 
-    // انتظار تحميل الشعار
     const imgs = el.printArea.querySelectorAll('img');
     const imgPromises = Array.from(imgs).map((img) => new Promise((resolve) => {
       if (img.complete) return resolve();
@@ -1063,12 +1039,11 @@
           compress: true,
         });
 
-        // A4 أفقي: 297 × 210 مم
         const pageW = 297;
         const pageH = 210;
         const margin = 6;
-        const availW = pageW - margin * 2;   // 285 مم
-        const availH = pageH - margin * 2;   // 198 مم
+        const availW = pageW - margin * 2;
+        const availH = pageH - margin * 2;
 
         const imgW = canvas.width;
         const imgH = canvas.height;
@@ -1076,14 +1051,12 @@
         const heightAtFullW = availW * ratio;
 
         if (heightAtFullW <= availH) {
-          // ✅ ملاءمة تامة — صفحة واحدة
           const drawW = availW;
           const drawH = heightAtFullW;
           const x = margin;
           const y = margin + (availH - drawH) / 2;
           pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, y, drawW, drawH);
         } else {
-          // محاولة تصغير بسيط (حتى 75% من العرض الكامل)
           const scaleDown = availH / heightAtFullW;
           if (scaleDown >= 0.75) {
             const drawW = availW * scaleDown;
@@ -1092,7 +1065,6 @@
             const y = margin;
             pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, y, drawW, drawH);
           } else {
-            // ❗ تقسيم إلى صفحات متساوية (بدون صفحة شبه فارغة)
             const pagesNeeded = Math.ceil(heightAtFullW / availH);
             const stripHeightPx = imgH / pagesNeeded;
 
