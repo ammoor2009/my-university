@@ -1192,7 +1192,30 @@
     document.getElementById(id).addEventListener('input', saveState);
   });
   el.semester.addEventListener('change', saveState);
+function attachTimeFormatter(input) {
+  // أثناء الكتابة: إزالة غير الأرقام + إضافة ":" بعد الساعتين تلقائيًا
+  input.addEventListener('input', (e) => {
+    let v = e.target.value.replace(/[^\d]/g, '');
+    if (v.length >= 3) {
+      v = v.slice(0, 2) + ':' + v.slice(2, 4);
+    }
+    e.target.value = v.slice(0, 5);
+  });
 
+  // عند الخروج من الحقل: تنسيق نهائي + ضبط القيم
+  input.addEventListener('blur', (e) => {
+    let v = e.target.value.trim();
+    if (!v) return;
+    const m = v.match(/^(\d{1,2}):?(\d{1,2})?$/);
+    if (!m) { e.target.value = ''; return; }
+    let h = parseInt(m[1], 10);
+    let mn = parseInt(m[2] || '0', 10);
+    if (isNaN(h) || isNaN(mn)) { e.target.value = ''; return; }
+    if (h > 23) h = 23;
+    if (mn > 59) mn = 59;
+    e.target.value = String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0');
+  });
+}
   function init() {
     preloadLogoAsBase64();
 
