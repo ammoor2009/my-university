@@ -724,12 +724,12 @@ function formatTimeRange(start, end) {
     const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
     return `
-    <div style="text-align:center;margin-bottom:2px;">
-  <img src="${LOGO_PATH}" alt="" style="height:92px;width:auto;max-width:155px;object-fit:contain;display:inline-block;"
+    <div style="text-align:center;margin-bottom:6px;">
+  <img src="${LOGO_PATH}" alt="" style="height:85px;width:auto;max-width:140px;object-fit:contain;display:inline-block;"
        onerror="this.style.display='none'" />
 </div>
 
-<div style="text-align:center;font-size:13pt;font-weight:800;color:#1b3a6b;line-height:1.1;margin-bottom:5px;">
+<div style="text-align:center;font-size:14pt;font-weight:800;color:#1b3a6b;line-height:1.25;margin-bottom:5px;">
   ${t('printUniversity')}
 </div>
 
