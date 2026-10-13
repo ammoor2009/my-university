@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>جدولي الجامعي | My University Schedule</title>
+
+  <!-- خطوط عربية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- مكتبة docx لتصدير Word -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <!-- FileSaver لحفظ الملفات -->
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <!-- html2pdf (html2canvas + jsPDF) لتصدير PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ====== رأس الصفحة ====== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-text">
+          <h1 id="appTitle">جدولي الجامعي</h1>
+          <p id="appSubtitle">جامعة فيلادلفيا</p>
+        </div>
+      </div>
+      <div class="lang-switch">
+        <label for="langSelect" id="langLabel">اللغة</label>
+        <select id="langSelect">
+          <option value="ar" selected>العربية</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ====== البيانات الأكاديمية ====== -->
+    <section class="card" id="academicSection">
+      <h2 id="academicTitle">البيانات الأكاديمية</h2>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="facultyName" id="labelFacultyName">اسم عضو هيئة التدريس</label>
+          <input type="text" id="facultyName" placeholder="مثال: د. أحمد محمد" />
+        </div>
+
+        <div class="field">
+          <label for="universityName" id="labelUniversity">اسم الجامعة</label>
+          <input type="text" id="universityName" readonly />
+        </div>
+
+        <div class="field">
+          <label for="collegeName" id="labelCollege">اسم الكلية</label>
+          <input type="text" id="collegeName" placeholder="مثال: كلية الهندسة" />
+        </div>
+
+        <div class="field">
+          <label for="departmentName" id="labelDepartment">اسم القسم</label>
+          <input type="text" id="departmentName" placeholder="مثال: قسم هندسة الحاسوب" />
+        </div>
+
+        <div class="field">
+          <label for="semester" id="labelSemester">الفصل الدراسي</label>
+          <select id="semester">
+            <option value="" id="semPlaceholder">اختر الفصل</option>
+            <option value="first" id="semFirst">الفصل الأول</option>
+            <option value="second" id="semSecond">الفصل الثاني</option>
+            <option value="summer" id="semSummer">الفصل الصيفي</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="academicYear" id="labelYear">العام الدراسي</label>
+          <input type="text" id="academicYear" placeholder="2026/2027" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== نموذج إضافة النشاط ====== -->
+    <section class="card" id="activitySection">
+      <h2 id="activityTitle">إضافة نشاط إلى الجدول</h2>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="activityType" id="labelActivityType">نوع النشاط</label>
+          <select id="activityType">
+            <option value="lecture" id="typeLecture">محاضرة</option>
+            <option value="office" id="typeOffice">ساعة مكتبية</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="courseName" id="labelCourseName">اسم المساق</label>
+          <input type="text" id="courseName" placeholder="مثال: برمجة 1" />
+        </div>
+
+        <div class="field">
+          <label for="roomNumber" id="labelRoom">رقم القاعة / المكتب</label>
+          <input type="text" id="roomNumber" placeholder="مثال: IT-324" />
+        </div>
+      </div>
+
+      <!-- الأيام -->
+      <div class="field full-width">
+        <label id="labelDays">اليوم / الأيام</label>
+        <div class="days-grid" id="daysGrid">
+          <label class="day-chip"><input type="checkbox" value="sat" /><span id="daySat">السبت</span></label>
+          <label class="day-chip"><input type="checkbox" value="sun" /><span id="daySun">الأحد</span></label>
+          <label class="day-chip"><input type="checkbox" value="mon" /><span id="dayMon">الاثنين</span></label>
+          <label class="day-chip"><input type="checkbox" value="tue" /><span id="dayTue">الثلاثاء</span></label>
+          <label class="day-chip"><input type="checkbox" value="wed" /><span id="dayWed">الأربعاء</span></label>
+          <label class="day-chip"><input type="checkbox" value="thu" /><span id="dayThu">الخميس</span></label>
+        </div>
+      </div>
+
+      <!-- الفترة -->
+      <div class="field full-width">
+        <label id="labelPeriod">الفترة</label>
+        <div class="period-options" id="periodOptions">
+          <label class="radio-chip">
+            <input type="radio" name="period" value="am" checked />
+            <span id="periodAm">ص - صباحًا</span>
+          </label>
+          <label class="radio-chip">
+            <input type="radio" name="period" value="pm" />
+            <span id="periodPm">م - مساءً</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- الوقت -->
+      <div class="form-grid">
+        <div class="field">
+          <label for="startTime" id="labelStartTime">وقت البداية (اختياري)</label>
+          <input type="time" id="startTime" />
+        </div>
+        <div class="field">
+          <label for="endTime" id="labelEndTime">وقت النهاية (اختياري)</label>
+          <input type="time" id="endTime" />
+        </div>
+      </div>
+
+      <!-- أزرار النموذج -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" id="addBtn">إضافة إلى الجدول</button>
+        <button type="button" class="btn btn-secondary hidden" id="cancelEditBtn">إلغاء التعديل</button>
+      </div>
+      <p class="edit-hint hidden" id="editHint">وضع التعديل — عدّل البيانات ثم اضغط «حفظ التعديلات»</p>
+    </section>
+
+    <!-- ====== عرض الجدولين ====== -->
+    <section class="card" id="tablesSection">
+      <h2 id="tablesTitle">الجداول</h2>
+
+      <!-- جدول المحاضرات -->
+      <div class="table-block">
+        <h3 id="lecturesTitle">جدول المحاضرات</h3>
+        <div class="table-wrap">
+          <table id="lecturesTable">
+            <thead>
+              <tr>
+                <th id="thNum">#</th>
+                <th id="thCourse">اسم المساق</th>
+                <th id="thDay">اليوم</th>
+                <th id="thPeriod">الفترة</th>
+                <th id="thTime">الوقت</th>
+                <th id="thRoom">القاعة</th>
+                <th id="thActions">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="lecturesBody"></tbody>
+          </table>
+        </div>
+        <p class="empty-msg hidden" id="lecturesEmpty">لا توجد محاضرات بعد. أضف أول محاضرة من النموذج أعلاه.</p>
+      </div>
+
+      <!-- جدول الساعات المكتبية -->
+      <div class="table-block">
+        <h3 id="officeTitle">جدول الساعات المكتبية</h3>
+        <div class="table-wrap">
+          <table id="officeTable">
+            <thead>
+              <tr>
+                <th id="thONum">#</th>
+                <th id="thODay">اليوم</th>
+                <th id="thOPeriod">الفترة</th>
+                <th id="thOTime">الوقت</th>
+                <th id="thORoom">المكتب</th>
+                <th id="thOActions">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="officeBody"></tbody>
+          </table>
+        </div>
+        <p class="empty-msg hidden" id="officeEmpty">لا توجد ساعات مكتبية بعد. أضف أول ساعة من النموذج أعلاه.</p>
+      </div>
+    </section>
+
+    <!-- ====== أزرار التصدير والإدارة ====== -->
+    <section class="card actions-card" id="exportSection">
+      <h2 id="exportTitle">التصدير</h2>
+      <div class="export-buttons">
+        <button type="button" class="btn btn-word" id="exportWordBtn">تصدير إلى Word</button>
+        <button type="button" class="btn btn-pdf" id="exportPdfBtn">تصدير إلى PDF</button>
+      </div>
+      <div class="danger-zone">
+        <button type="button" class="btn btn-danger" id="clearAllBtn">مسح جميع البيانات</button>
+      </div>
+      <p class="storage-note" id="storageNote">يتم حفظ البيانات محليًا في هذا المتصفح فقط. لا تتم المزامنة بين الأجهزة.</p>
+    </section>
+
+  </main>
+
+  <!-- ====== نافذة تأكيد مخصصة ====== -->
+  <div class="modal-overlay hidden" id="confirmOverlay">
+    <div class="modal-box">
+      <p id="confirmMessage">هل أنت متأكد؟</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" id="confirmYes">نعم، تأكيد</button>
+        <button type="button" class="btn btn-secondary" id="confirmNo">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== توست (رسائل) ====== -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- ====== منطقة الطباعة المخفية (للتصدير) ====== -->
+  <div id="printArea" class="print-area" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
