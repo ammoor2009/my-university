@@ -813,7 +813,7 @@ function formatTimeRange(start, end) {
 
       const ac = getAcademicData();
       const isAr = currentLang === 'ar';
-      const fontName = isAr ? 'Arial' : 'Calibri';
+      const fontName = isAr ? 'Sakkal Majalla' : 'Calibri';
 
       const lectures = sortActivitiesByDay(activities.filter((a) => a.type === 'lecture'));
       const officeHours = sortActivitiesByDay(activities.filter((a) => a.type === 'office'));
