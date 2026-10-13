@@ -45,7 +45,7 @@
       daySat: 'السبت', daySun: 'الأحد', dayMon: 'الاثنين',
       dayTue: 'الثلاثاء', dayWed: 'الأربعاء', dayThu: 'الخميس',
       labelPeriod: 'الفترة',
-      periodAm: 'ص - صباحًا', periodPm: 'م - مساءً',
+      periodAm: 'صباحًا', periodPm: 'مساءً',
       labelStartTime: 'وقت البداية (اختياري)',
       labelEndTime: 'وقت النهاية (اختياري)',
       addBtn: 'إضافة إلى الجدول',
