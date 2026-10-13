@@ -9,24 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- مكتبة docx لتصدير Word -->
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
-  <!-- FileSaver لحفظ الملفات -->
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-  <!-- html2canvas + jsPDF لتصدير PDF بدقة عالية -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ====== رأس الصفحة ====== -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
-        <img src="assets/philadelphia-university-logo.png" alt="" class="brand-logo"
-             onerror="this.style.display='none'" />
         <div class="brand-text">
           <h1 id="appTitle">جدولي الجامعي</h1>
           <p id="appSubtitle">جامعة فيلادلفيا</p>
@@ -44,7 +37,6 @@
 
   <main class="container">
 
-    <!-- ====== البيانات الأكاديمية ====== -->
     <section class="card" id="academicSection">
       <h2 id="academicTitle">البيانات الأكاديمية</h2>
 
@@ -86,7 +78,6 @@
       </div>
     </section>
 
-    <!-- ====== نموذج إضافة النشاط ====== -->
     <section class="card" id="activitySection">
       <h2 id="activityTitle">إضافة نشاط إلى الجدول</h2>
 
@@ -154,7 +145,6 @@
       <p class="edit-hint hidden" id="editHint">وضع التعديل — عدّل البيانات ثم اضغط «حفظ التعديلات»</p>
     </section>
 
-    <!-- ====== عرض الجدولين ====== -->
     <section class="card" id="tablesSection">
       <h2 id="tablesTitle">الجداول</h2>
 
@@ -200,7 +190,6 @@
       </div>
     </section>
 
-    <!-- ====== أزرار التصدير ====== -->
     <section class="card actions-card" id="exportSection">
       <h2 id="exportTitle">التصدير</h2>
       <div class="export-buttons">
@@ -215,7 +204,6 @@
 
   </main>
 
-  <!-- نافذة تأكيد -->
   <div class="modal-overlay hidden" id="confirmOverlay">
     <div class="modal-box">
       <p id="confirmMessage">هل أنت متأكد؟</p>
@@ -226,12 +214,10 @@
     </div>
   </div>
 
-  <!-- توست -->
   <div class="toast hidden" id="toast"></div>
 
-  <!-- منطقة الطباعة المخفية (للتصدير) -->
   <div id="printArea" class="print-area" aria-hidden="true"></div>
 
   <script src="app.js"></script>
 </body>
-      </html>
+</html>
