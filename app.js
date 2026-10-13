@@ -339,9 +339,9 @@
   }
 
   function getSelectedDays() {
-    const checked = el.daysGrid.querySelectorAll('input[type="checkbox"]:checked');
-    return Array.from(checked).map((cb) => cb.value);
-  }
+  const checked = document.querySelectorAll('#daysGrid input[type="checkbox"]:checked');
+  return Array.from(checked).map((cb) => cb.value);
+}
 
   function getSelectedPeriod() {
     const radio = document.querySelector('input[name="period"]:checked');
