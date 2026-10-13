@@ -174,7 +174,6 @@ body.lang-en { font-family: var(--font-en); }
 
 .field input::placeholder { color: #a8b0c0; }
 
-
 .days-grid {
   display: flex;
   flex-wrap: wrap;
