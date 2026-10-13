@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>جدولي الجامعي | My University Schedule</title>
 
-  <!-- خطوط عربية -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -14,8 +13,9 @@
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <!-- FileSaver لحفظ الملفات -->
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-  <!-- html2pdf (html2canvas + jsPDF) لتصدير PDF -->
-  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+  <!-- html2canvas + jsPDF لتصدير PDF بدقة عالية -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -25,6 +25,8 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
+        <img src="assets/philadelphia-university-logo.png" alt="" class="brand-logo"
+             onerror="this.style.display='none'" />
         <div class="brand-text">
           <h1 id="appTitle">جدولي الجامعي</h1>
           <p id="appSubtitle">جامعة فيلادلفيا</p>
@@ -108,7 +110,6 @@
         </div>
       </div>
 
-      <!-- الأيام -->
       <div class="field full-width">
         <label id="labelDays">اليوم / الأيام</label>
         <div class="days-grid" id="daysGrid">
@@ -121,7 +122,6 @@
         </div>
       </div>
 
-      <!-- الفترة -->
       <div class="field full-width">
         <label id="labelPeriod">الفترة</label>
         <div class="period-options" id="periodOptions">
@@ -136,7 +136,6 @@
         </div>
       </div>
 
-      <!-- الوقت -->
       <div class="form-grid">
         <div class="field">
           <label for="startTime" id="labelStartTime">وقت البداية (اختياري)</label>
@@ -148,7 +147,6 @@
         </div>
       </div>
 
-      <!-- أزرار النموذج -->
       <div class="form-actions">
         <button type="button" class="btn btn-primary" id="addBtn">إضافة إلى الجدول</button>
         <button type="button" class="btn btn-secondary hidden" id="cancelEditBtn">إلغاء التعديل</button>
@@ -160,7 +158,6 @@
     <section class="card" id="tablesSection">
       <h2 id="tablesTitle">الجداول</h2>
 
-      <!-- جدول المحاضرات -->
       <div class="table-block">
         <h3 id="lecturesTitle">جدول المحاضرات</h3>
         <div class="table-wrap">
@@ -182,7 +179,6 @@
         <p class="empty-msg hidden" id="lecturesEmpty">لا توجد محاضرات بعد. أضف أول محاضرة من النموذج أعلاه.</p>
       </div>
 
-      <!-- جدول الساعات المكتبية -->
       <div class="table-block">
         <h3 id="officeTitle">جدول الساعات المكتبية</h3>
         <div class="table-wrap">
@@ -204,7 +200,7 @@
       </div>
     </section>
 
-    <!-- ====== أزرار التصدير والإدارة ====== -->
+    <!-- ====== أزرار التصدير ====== -->
     <section class="card actions-card" id="exportSection">
       <h2 id="exportTitle">التصدير</h2>
       <div class="export-buttons">
@@ -219,7 +215,7 @@
 
   </main>
 
-  <!-- ====== نافذة تأكيد مخصصة ====== -->
+  <!-- نافذة تأكيد -->
   <div class="modal-overlay hidden" id="confirmOverlay">
     <div class="modal-box">
       <p id="confirmMessage">هل أنت متأكد؟</p>
@@ -230,12 +226,12 @@
     </div>
   </div>
 
-  <!-- ====== توست (رسائل) ====== -->
+  <!-- توست -->
   <div class="toast hidden" id="toast"></div>
 
-  <!-- ====== منطقة الطباعة المخفية (للتصدير) ====== -->
+  <!-- منطقة الطباعة المخفية (للتصدير) -->
   <div id="printArea" class="print-area" aria-hidden="true"></div>
 
   <script src="app.js"></script>
 </body>
-</html>
+      </html>
