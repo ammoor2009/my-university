@@ -1218,7 +1218,8 @@ function attachTimeFormatter(input) {
 }
   function init() {
     preloadLogoAsBase64();
-
+attachTimeFormatter(el.startTime);
+attachTimeFormatter(el.endTime);
     const saved = loadState();
     if (saved) {
       if (saved.lang && (saved.lang === 'ar' || saved.lang === 'en')) {
