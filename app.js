@@ -10,7 +10,7 @@
   const DAY_KEYS = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu'];
   const DAY_ORDER = { sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thu: 5 };
 
-  // عرض صفحة PDF بالمحتوى (px) — يحدد حجم الخط الظاهر في الملف
+  // عرض محتوى منطقة الطباعة (بكسل)
   const PRINT_WIDTH = 900;
 
   const I18N = {
@@ -83,7 +83,7 @@
       msgExporting: 'جاري التصدير...',
       msgExportError: 'حدث خطأ أثناء التصدير. يرجى المحاولة مرة أخرى.',
       msgNoData: 'لا توجد بيانات للتصدير. أضف بعض الأنشطة أولاً.',
-      msgTooManyForPdf: 'عدد الأنشطة كبير جدًا بحيث لا يمكن عرضها بصورة مقروءة في صفحة A4 أفقية واحدة.',
+      msgLibMissing: 'مكتبة التصدير غير محملة. تحقق من الاتصال بالإنترنت.',
       pdfTitle: 'جدول المحاضرات والساعات المكتبية',
       wordTitle: 'جدول المحاضرات والساعات المكتبية',
       printFaculty: 'عضو هيئة التدريس',
@@ -134,7 +134,7 @@
       addBtn: 'Add to Schedule',
       saveEditBtn: 'Save Changes',
       cancelEditBtn: 'Cancel Edit',
-      editHint: 'Edit mode — modify the data then click “Save Changes”',
+      editHint: 'Edit mode — modify the data then click "Save Changes"',
       tablesTitle: 'Schedules',
       lecturesTitle: 'Lectures Schedule',
       officeTitle: 'Office Hours Schedule',
@@ -165,7 +165,7 @@
       msgExporting: 'Exporting...',
       msgExportError: 'An error occurred during export. Please try again.',
       msgNoData: 'No data to export. Please add some activities first.',
-      msgTooManyForPdf: 'Too many activities to fit legibly on a single A4 landscape page.',
+      msgLibMissing: 'Export library not loaded. Check your internet connection.',
       pdfTitle: 'Lectures and Office Hours Schedule',
       wordTitle: 'Lectures and Office Hours Schedule',
       printFaculty: 'Faculty Member',
@@ -664,8 +664,9 @@
   }
 
   /* =========================================
-     بناء HTML للطباعة والتصدير (PDF)
-     التصميم الجديد: شعار → جامعة → كلية+قسم → عام+فصل → دكتور
+     بناء HTML للتصدير (PDF)
+     الترتيب: شعار → جامعة → كلية+قسم → عام+فصل → دكتور
+     جميع أعمدة الجدول مُوسَّطة
      ========================================= */
 
   function buildPrintHTML() {
@@ -683,8 +684,8 @@
       ? lectures.map((a, i) => `
         <tr>
           <td style="text-align:center">${i + 1}</td>
-          <td>${escapeHtml(a.course)}</td>
-          <td>${a.days.map(getDayLabel).join('، ')}</td>
+          <td style="text-align:center">${escapeHtml(a.course)}</td>
+          <td style="text-align:center">${a.days.map(getDayLabel).join('، ')}</td>
           <td style="text-align:center">${getPeriodLabel(a.period)}</td>
           <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
           <td style="text-align:center">${escapeHtml(a.room)}</td>
@@ -695,57 +696,47 @@
       ? officeHours.map((a, i) => `
         <tr>
           <td style="text-align:center">${i + 1}</td>
-          <td>${a.days.map(getDayLabel).join('، ')}</td>
+          <td style="text-align:center">${a.days.map(getDayLabel).join('، ')}</td>
           <td style="text-align:center">${getPeriodLabel(a.period)}</td>
           <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
           <td style="text-align:center">${escapeHtml(a.room)}</td>
         </tr>`).join('')
       : `<tr><td colspan="5" style="text-align:center;color:#888;padding:8px">${t('officeEmpty')}</td></tr>`;
 
-    // أنماط مضغوطة لملاءمة A4 أفقي
     const tableBase = `width:100%;border-collapse:collapse;font-family:${fontFamily};direction:${dir};font-size:10.5pt;table-layout:fixed;`;
-    const thStyle = `background:#1b3a6b;color:#fff;padding:5px 8px;font-weight:700;border:1px solid #14305a;font-size:10.5pt;text-align:${isAr ? 'right' : 'left'};vertical-align:middle;`;
-    const tdStyle = `padding:4px 8px;border:1px solid #c9d3e2;font-size:10.5pt;text-align:${isAr ? 'right' : 'left'};vertical-align:middle;line-height:1.35;`;
+    const thStyle = `background:#1b3a6b;color:#fff;padding:5px 8px;font-weight:700;border:1px solid #14305a;font-size:10.5pt;text-align:center;vertical-align:middle;`;
+    const tdStyle = `padding:4px 8px;border:1px solid #c9d3e2;font-size:10.5pt;vertical-align:middle;line-height:1.35;`;
 
-    // ترتيب البيانات الأكاديمية حسب طلب المستخدم:
-    // 1) شعار  2) جامعة  3) كلية + قسم  4) عام + فصل  5) اسم الدكتور
     const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
     return `
     <div style="width:${PRINT_WIDTH}px;background:#ffffff;padding:10px 16px 12px;box-sizing:border-box;direction:${dir};font-family:${fontFamily};color:#1a1f2e;">
 
-      <!-- الشعار -->
       <div style="text-align:center;margin-bottom:6px;">
         <img src="${LOGO_PATH}" alt="" style="height:85px;width:auto;max-width:140px;object-fit:contain;display:inline-block;"
              onerror="this.style.display='none'" />
       </div>
 
-      <!-- اسم الجامعة -->
       <div style="text-align:center;font-size:14pt;font-weight:800;color:#1b3a6b;line-height:1.25;margin-bottom:5px;">
         ${t('printUniversity')}
       </div>
 
-      <!-- الكلية + القسم -->
       <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:2px;">
         <strong style="color:#1b3a6b;">${t('printCollege')}:</strong> ${escapeHtml(ac.collegeName)}${sep}<strong style="color:#1b3a6b;">${t('printDepartment')}:</strong> ${escapeHtml(ac.departmentName)}
       </div>
 
-      <!-- العام الدراسي + الفصل (العام أولًا) -->
       <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:2px;">
         <strong style="color:#1b3a6b;">${t('printYear')}:</strong> ${escapeHtml(ac.academicYear)}${sep}<strong style="color:#1b3a6b;">${t('printSemester')}:</strong> ${escapeHtml(ac.semester)}
       </div>
 
-      <!-- اسم عضو هيئة التدريس -->
       <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:8px;">
         <strong style="color:#1b3a6b;">${t('printFaculty')}:</strong> ${escapeHtml(ac.facultyName)}
       </div>
 
-      <!-- عنوان الجدول -->
       <div style="text-align:center;font-size:12.5pt;font-weight:800;color:#1b3a6b;border-top:2px solid #c8a44a;border-bottom:2px solid #c8a44a;padding:4px 0;margin-bottom:8px;">
         ${t('pdfTitle')}
       </div>
 
-      <!-- جدول المحاضرات -->
       <div style="font-size:12pt;font-weight:800;color:#1b3a6b;margin:0 0 4px;padding-${isAr ? 'right' : 'left'}:8px;border-${isAr ? 'right' : 'left'}:4px solid #c8a44a;">
         ${t('lecturesTitle')}
       </div>
@@ -760,18 +751,17 @@
         </colgroup>
         <thead>
           <tr>
-            <th style="${thStyle}text-align:center;">${t('thNum')}</th>
+            <th style="${thStyle}">${t('thNum')}</th>
             <th style="${thStyle}">${t('thCourse')}</th>
             <th style="${thStyle}">${t('thDay')}</th>
-            <th style="${thStyle}text-align:center;">${t('thPeriod')}</th>
-            <th style="${thStyle}text-align:center;">${t('thTime')}</th>
-            <th style="${thStyle}text-align:center;">${t('thRoom')}</th>
+            <th style="${thStyle}">${t('thPeriod')}</th>
+            <th style="${thStyle}">${t('thTime')}</th>
+            <th style="${thStyle}">${t('thRoom')}</th>
           </tr>
         </thead>
         <tbody>${lectureRows}</tbody>
       </table>
 
-      <!-- جدول الساعات المكتبية -->
       <div style="font-size:12pt;font-weight:800;color:#1b3a6b;margin:10px 0 4px;padding-${isAr ? 'right' : 'left'}:8px;border-${isAr ? 'right' : 'left'}:4px solid #c8a44a;">
         ${t('officeTitle')}
       </div>
@@ -785,11 +775,11 @@
         </colgroup>
         <thead>
           <tr>
-            <th style="${thStyle}text-align:center;">${t('thONum')}</th>
+            <th style="${thStyle}">${t('thONum')}</th>
             <th style="${thStyle}">${t('thODay')}</th>
-            <th style="${thStyle}text-align:center;">${t('thOPeriod')}</th>
-            <th style="${thStyle}text-align:center;">${t('thOTime')}</th>
-            <th style="${thStyle}text-align:center;">${t('thORoom')}</th>
+            <th style="${thStyle}">${t('thOPeriod')}</th>
+            <th style="${thStyle}">${t('thOTime')}</th>
+            <th style="${thStyle}">${t('thORoom')}</th>
           </tr>
         </thead>
         <tbody>${officeRows}</tbody>
@@ -799,14 +789,16 @@
   }
 
   /* =========================================
-     تصدير Word — نفس الترتيب ونفس RTL
+     تصدير Word
+     - اتجاه RTL صحيح للجداول والفقرات
+     - جميع الأعمدة مُوسَّطة
      ========================================= */
 
   function exportToWord() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
 
     try {
-      if (typeof docx === 'undefined') { showToast('مكتبة Word غير محملة.', true); return; }
+      if (typeof docx === 'undefined') { showToast(t('msgLibMissing'), true); return; }
 
       const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
               WidthType, AlignmentType, BorderStyle, ImageRun } = docx;
@@ -827,7 +819,6 @@
 
       const children = [];
 
-      // helper: فقرة مركزية
       function centeredPara(runs, opts) {
         opts = opts || {};
         return new Paragraph({
@@ -838,7 +829,6 @@
         });
       }
 
-      // helper: نص عادي
       function run(text, size, opts) {
         opts = opts || {};
         return new TextRun({
@@ -903,7 +893,7 @@
         run(t('wordTitle'), 26, { bold: true, color: '1B3A6B' }),
       ], { after: 160 }));
 
-      // دالة خلية (مع RTL)
+      // دالة خلية — جميع الخلايا مُوسَّطة
       function makeCell(text, opts) {
         opts = opts || {};
         return new TableCell({
@@ -913,9 +903,7 @@
           verticalAlign: 'center',
           children: [new Paragraph({
             bidirectional: isAr,
-            alignment: opts.center
-              ? AlignmentType.CENTER
-              : (isAr ? AlignmentType.RIGHT : AlignmentType.LEFT),
+            alignment: AlignmentType.CENTER,
             children: [new TextRun({
               text: String(text || ''),
               font: fontName,
@@ -939,23 +927,23 @@
       const lectureHeader = new TableRow({
         tableHeader: true,
         children: [
-          makeCell(t('thNum'), { header: true, center: true, width: 6 }),
+          makeCell(t('thNum'), { header: true, width: 6 }),
           makeCell(t('thCourse'), { header: true, width: 26 }),
           makeCell(t('thDay'), { header: true, width: 17 }),
-          makeCell(t('thPeriod'), { header: true, center: true, width: 12 }),
-          makeCell(t('thTime'), { header: true, center: true, width: 21 }),
-          makeCell(t('thRoom'), { header: true, center: true, width: 18 }),
+          makeCell(t('thPeriod'), { header: true, width: 12 }),
+          makeCell(t('thTime'), { header: true, width: 21 }),
+          makeCell(t('thRoom'), { header: true, width: 18 }),
         ],
       });
 
       const lectureRows = lectures.map((a, i) => new TableRow({
         children: [
-          makeCell(i + 1, { center: true }),
+          makeCell(i + 1),
           makeCell(a.course),
           makeCell(a.days.map(getDayLabel).join('، ')),
-          makeCell(getPeriodLabel(a.period), { center: true }),
-          makeCell(formatTimeRange(a.start, a.end), { center: true }),
-          makeCell(a.room, { center: true }),
+          makeCell(getPeriodLabel(a.period)),
+          makeCell(formatTimeRange(a.start, a.end)),
+          makeCell(a.room),
         ],
       }));
 
@@ -976,21 +964,21 @@
       const officeHeader = new TableRow({
         tableHeader: true,
         children: [
-          makeCell(t('thONum'), { header: true, center: true, width: 7 }),
+          makeCell(t('thONum'), { header: true, width: 7 }),
           makeCell(t('thODay'), { header: true, width: 24 }),
-          makeCell(t('thOPeriod'), { header: true, center: true, width: 16 }),
-          makeCell(t('thOTime'), { header: true, center: true, width: 29 }),
-          makeCell(t('thORoom'), { header: true, center: true, width: 24 }),
+          makeCell(t('thOPeriod'), { header: true, width: 16 }),
+          makeCell(t('thOTime'), { header: true, width: 29 }),
+          makeCell(t('thORoom'), { header: true, width: 24 }),
         ],
       });
 
       const officeRows = officeHours.map((a, i) => new TableRow({
         children: [
-          makeCell(i + 1, { center: true }),
+          makeCell(i + 1),
           makeCell(a.days.map(getDayLabel).join('، ')),
-          makeCell(getPeriodLabel(a.period), { center: true }),
-          makeCell(formatTimeRange(a.start, a.end), { center: true }),
-          makeCell(a.room, { center: true }),
+          makeCell(getPeriodLabel(a.period)),
+          makeCell(formatTimeRange(a.start, a.end)),
+          makeCell(a.room),
         ],
       }));
 
@@ -1026,67 +1014,120 @@
   }
 
   /* =========================================
-     تصدير PDF — هوامش مضغوطة لصفحة واحدة
+     تصدير PDF — html2canvas + jsPDF
+     منطق: صفحة واحدة إذا أمكن، وإلا تقسيم متوازن
      ========================================= */
 
   function exportToPdf() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
 
-    try {
-      showToast(t('msgExporting'));
-      const html = buildPrintHTML();
-      el.printArea.innerHTML = html;
+    if (typeof html2canvas === 'undefined' || !window.jspdf) {
+      showToast(t('msgLibMissing'), true); return;
+    }
 
-      const target = el.printArea.firstElementChild;
+    showToast(t('msgExporting'));
 
-      const imgs = el.printArea.querySelectorAll('img');
-      const imgPromises = Array.from(imgs).map((img) => new Promise((resolve) => {
-        if (img.complete) return resolve();
-        img.onload = () => resolve();
-        img.onerror = () => { img.style.display = 'none'; resolve(); };
-        setTimeout(resolve, 3000);
-      }));
+    el.printArea.innerHTML = buildPrintHTML();
+    const target = el.printArea.firstElementChild;
 
-      Promise.all(imgPromises).then(() => {
+    // انتظار تحميل الشعار
+    const imgs = el.printArea.querySelectorAll('img');
+    const imgPromises = Array.from(imgs).map((img) => new Promise((resolve) => {
+      if (img.complete) return resolve();
+      img.onload = () => resolve();
+      img.onerror = () => { img.style.display = 'none'; resolve(); };
+      setTimeout(resolve, 2500);
+    }));
+
+    Promise.all(imgPromises)
+      .then(() => {
         el.printArea.querySelectorAll('img').forEach((img) => {
           if (!img.naturalWidth) img.style.display = 'none';
         });
+        return html2canvas(target, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: PRINT_WIDTH,
+          windowWidth: PRINT_WIDTH,
+        });
+      })
+      .then((canvas) => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'landscape',
+          compress: true,
+        });
 
-        const opt = {
-          margin: [5, 6, 5, 6],               // هوامش صغيرة متوازنة
-          filename: currentLang === 'ar'
-            ? `جدول_المحاضرات_${getAcademicData().facultyName || 'عضو_الهيئة'}.pdf`
-            : `Schedule_${(getAcademicData().facultyName || 'Faculty').replace(/\s+/g, '_')}.pdf`,
-          image: { type: 'jpeg', quality: 0.96 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            allowTaint: false,
-            letterRendering: true,
-            logging: false,
-            backgroundColor: '#ffffff',
-            width: PRINT_WIDTH,
-            windowWidth: PRINT_WIDTH,
-            scrollX: 0,
-            scrollY: 0,
-          },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
-          pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] },
-        };
+        // A4 أفقي: 297 × 210 مم
+        const pageW = 297;
+        const pageH = 210;
+        const margin = 6;
+        const availW = pageW - margin * 2;   // 285 مم
+        const availH = pageH - margin * 2;   // 198 مم
 
-        html2pdf().set(opt).from(target).save()
-          .then(() => { el.printArea.innerHTML = ''; })
-          .catch((err) => {
-            console.error('PDF error:', err);
-            el.printArea.innerHTML = '';
-            showToast(t('msgExportError'), true);
-          });
+        const imgW = canvas.width;
+        const imgH = canvas.height;
+        const ratio = imgH / imgW;
+        const heightAtFullW = availW * ratio;
+
+        if (heightAtFullW <= availH) {
+          // ✅ ملاءمة تامة — صفحة واحدة
+          const drawW = availW;
+          const drawH = heightAtFullW;
+          const x = margin;
+          const y = margin + (availH - drawH) / 2;
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, y, drawW, drawH);
+        } else {
+          // محاولة تصغير بسيط (حتى 75% من العرض الكامل)
+          const scaleDown = availH / heightAtFullW;
+          if (scaleDown >= 0.75) {
+            const drawW = availW * scaleDown;
+            const drawH = availH;
+            const x = (pageW - drawW) / 2;
+            const y = margin;
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, y, drawW, drawH);
+          } else {
+            // ❗ تقسيم إلى صفحات متساوية (بدون صفحة شبه فارغة)
+            const pagesNeeded = Math.ceil(heightAtFullW / availH);
+            const stripHeightPx = imgH / pagesNeeded;
+
+            for (let i = 0; i < pagesNeeded; i++) {
+              if (i > 0) pdf.addPage();
+
+              const srcY = i * stripHeightPx;
+              const srcH = Math.min(stripHeightPx, imgH - srcY);
+
+              const stripCanvas = document.createElement('canvas');
+              stripCanvas.width = imgW;
+              stripCanvas.height = srcH;
+              const ctx = stripCanvas.getContext('2d');
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, imgW, srcH);
+              ctx.drawImage(canvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
+
+              const drawH = (srcH / imgW) * availW;
+              pdf.addImage(stripCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', margin, margin, availW, drawH);
+            }
+          }
+        }
+
+        const fname = currentLang === 'ar'
+          ? `جدول_المحاضرات_${getAcademicData().facultyName || 'عضو_الهيئة'}.pdf`
+          : `Schedule_${(getAcademicData().facultyName || 'Faculty').replace(/\s+/g, '_')}.pdf`;
+
+        pdf.save(fname);
+        el.printArea.innerHTML = '';
+      })
+      .catch((err) => {
+        console.error('PDF error:', err);
+        el.printArea.innerHTML = '';
+        showToast(t('msgExportError'), true);
       });
-
-    } catch (err) {
-      console.error('PDF error:', err);
-      showToast(t('msgExportError'), true);
-    }
   }
 
   function preloadLogoAsBase64() {
