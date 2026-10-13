@@ -1,7 +1,3 @@
-/* =============================================
-   جدولي الجامعي | My University Schedule
-   ============================================= */
-
 :root {
   --primary: #1b3a6b;
   --primary-light: #2a5298;
@@ -13,7 +9,6 @@
   --text: #1a1f2e;
   --text-muted: #6b7280;
   --border: #e2e6ee;
-  --row-alt: #fafbfd;
   --danger: #c0392b;
   --danger-soft: #fdecea;
   --success: #1e7e4a;
@@ -41,7 +36,6 @@ body {
 
 body.lang-en { font-family: var(--font-en); }
 
-/* ====== الرأس ====== */
 .app-header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: #fff;
@@ -54,7 +48,7 @@ body.lang-en { font-family: var(--font-en); }
 .header-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 12px 22px;
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -62,26 +56,8 @@ body.lang-en { font-family: var(--font-en); }
   flex-wrap: wrap;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand-logo {
-  height: 56px;
-  width: auto;
-  max-width: 110px;
-  object-fit: contain;
-  background: #fff;
-  border-radius: 8px;
-  padding: 4px 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
-  flex-shrink: 0;
-}
-
 .brand-text h1 {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -.3px;
   line-height: 1.3;
@@ -117,7 +93,6 @@ body.lang-en { font-family: var(--font-en); }
 .lang-switch select:hover { background: rgba(255,255,255,.25); }
 .lang-switch select option { color: #1a1f2e; background: #fff; }
 
-/* ====== الحاوية ====== */
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -127,7 +102,6 @@ body.lang-en { font-family: var(--font-en); }
   gap: 22px;
 }
 
-/* ====== البطاقات ====== */
 .card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -153,12 +127,8 @@ body.lang-en { font-family: var(--font-en); }
   font-weight: 700;
   color: var(--primary);
   margin-bottom: 12px;
-  padding-right: 6px;
-  border-right: 4px solid var(--accent);
 }
-body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent); padding-right: 0; padding-left: 6px; }
 
-/* ====== النماذج ====== */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -205,7 +175,6 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
 
 .field input::placeholder { color: #a8b0c0; }
 
-/* الأيام */
 .days-grid {
   display: flex;
   flex-wrap: wrap;
@@ -219,7 +188,11 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
   user-select: none;
 }
 
-.day-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.day-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
 
 .day-chip span {
   display: inline-block;
@@ -242,11 +215,23 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
 
 .day-chip:hover span { border-color: var(--primary-light); }
 
-/* الفترة */
-.period-options { display: flex; gap: 10px; margin-top: 4px; }
+.period-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
 
-.radio-chip { position: relative; cursor: pointer; user-select: none; }
-.radio-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.radio-chip {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.radio-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
 
 .radio-chip span {
   display: inline-block;
@@ -269,7 +254,6 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
 
 .radio-chip:hover span { border-color: var(--accent); }
 
-/* أزرار النموذج */
 .form-actions {
   display: flex;
   gap: 10px;
@@ -288,7 +272,6 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
   display: inline-block;
 }
 
-/* ====== الأزرار ====== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -343,7 +326,6 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
 }
 .btn-del:hover { background: #fbdada; }
 
-/* ====== الجداول ====== */
 .table-block { margin-bottom: 30px; }
 .table-block:last-child { margin-bottom: 0; }
 
@@ -357,43 +339,40 @@ body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent)
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: .92rem;
-  min-width: 620px;
+  font-size: .9rem;
+  min-width: 560px;
 }
 
 thead { background: var(--primary); color: #fff; }
 
 thead th {
-  padding: 13px 14px;
+  padding: 12px 14px;
   text-align: right;
   font-weight: 700;
-  font-size: .86rem;
+  font-size: .85rem;
   white-space: nowrap;
-  border-left: 1px solid rgba(255,255,255,.12);
-  letter-spacing: .2px;
 }
-thead th:first-child { border-left: none; }
 
 body.lang-en thead th { text-align: left; }
 
 tbody td {
-  padding: 12px 14px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--border);
   text-align: right;
   vertical-align: middle;
-  line-height: 1.5;
-  word-break: break-word;
 }
 
 body.lang-en tbody td { text-align: left; }
 
-tbody tr:nth-child(even) { background: var(--row-alt); }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: #eef3fb; }
+tbody tr:hover { background: #f7f9fc; }
 
-td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+td .actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 
-/* رسالة فراغ */
 .empty-msg {
   text-align: center;
   color: var(--text-muted);
@@ -405,7 +384,6 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
   margin-top: 10px;
 }
 
-/* ====== التصدير ====== */
 .actions-card { text-align: center; }
 
 .export-buttons {
@@ -439,7 +417,6 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
   display: inline-block;
 }
 
-/* ====== نافذة التأكيد ====== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -467,13 +444,14 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
   font-weight: 600;
   margin-bottom: 22px;
   color: var(--text);
-  white-space: pre-line;
-  line-height: 1.7;
 }
 
-.modal-actions { display: flex; gap: 10px; justify-content: center; }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
 
-/* ====== التوست ====== */
 .toast {
   position: fixed;
   bottom: 28px;
@@ -501,18 +479,14 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .toast.error { background: var(--danger); }
 
-/* ====== منطقة الطباعة (خارج الشاشة) ====== */
 .print-area {
-  position: fixed;
-  left: -20000px;
+  position: absolute;
+  left: -9999px;
   top: 0;
-  width: 1060px;
-  background: #ffffff;
-  z-index: -1;
-  pointer-events: none;
+  width: 1100px;
+  background: #fff;
 }
 
-/* ====== أدوات ====== */
 .hidden { display: none !important; }
 
 @keyframes fadeIn {
@@ -520,13 +494,10 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
   to { opacity: 1; }
 }
 
-/* ====== التجاوب ====== */
 @media (max-width: 640px) {
-  .header-inner { padding: 10px 14px; }
-  .brand { gap: 10px; }
-  .brand-logo { height: 42px; max-width: 80px; padding: 3px 6px; }
-  .brand-text h1 { font-size: 1.05rem; }
-  .brand-text p { font-size: .75rem; }
+  .header-inner { padding: 12px 14px; }
+  .brand-text h1 { font-size: 1.1rem; }
+  .brand-text p { font-size: .78rem; }
   .card { padding: 20px 16px 22px; }
   .form-grid { grid-template-columns: 1fr; }
   .container { padding: 16px 10px 50px; }
@@ -534,7 +505,7 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
   .radio-chip span { padding: 7px 16px; font-size: .82rem; }
   .export-buttons { flex-direction: column; }
   .export-buttons .btn { width: 100%; }
-  table { font-size: .84rem; min-width: 560px; }
+  table { font-size: .82rem; }
   thead th, tbody td { padding: 9px 10px; }
   .toast { font-size: .84rem; padding: 10px 20px; }
-   }
+}
