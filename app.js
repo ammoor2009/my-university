@@ -724,16 +724,16 @@ function formatTimeRange(start, end) {
     const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
     return `
-    <div style="width:${PRINT_WIDTH}px;background:#ffffff;padding:10px 16px 12px;box-sizing:border-box;direction:${dir};font-family:${fontFamily};color:#1a1f2e;">
+<div style="width:${PRINT_WIDTH}px;background:#ffffff;padding:10px 16px 12px;box-sizing:border-box;direction:${dir};font-family:${fontFamily};color:#1a1f2e;">
 
-      <div style="text-align:center;margin-bottom:6px;">
-        <img src="${LOGO_PATH}" alt="" style="height:85px;width:auto;max-width:140px;object-fit:contain;display:inline-block;"
-             onerror="this.style.display='none'" />
-      </div>
+  <div style="text-align:center;margin:0;line-height:1;">
+    <img src="${LOGO_PATH}" alt="" style="height:95px;width:auto;max-width:155px;object-fit:contain;display:inline-block;margin-bottom:-8px;"
+         onerror="this.style.display='none'" />
+  </div>
 
-      <div style="text-align:center;font-size:14pt;font-weight:800;color:#1b3a6b;line-height:1.25;margin-bottom:5px;">
-        ${t('printUniversity')}
-      </div>
+  <div style="text-align:center;font-size:12pt;font-weight:800;color:#1b3a6b;line-height:1.1;margin:0 0 6px 0;">
+    ${t('printUniversity')}
+  </div>
 
       <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:2px;">
         <strong style="color:#1b3a6b;">${t('printCollege')}:</strong> ${escapeHtml(ac.collegeName)}${sep}<strong style="color:#1b3a6b;">${t('printDepartment')}:</strong> ${escapeHtml(ac.departmentName)}
