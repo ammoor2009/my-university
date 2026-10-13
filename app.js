@@ -94,7 +94,7 @@
       periodLabelAm: 'صباحًا',
       periodLabelPm: 'مساءً',
       timeFrom: 'من', timeTo: 'إلى', notSpecified: '—',
-      footerText: '© 2026 د. عمر الرواجفة — جميع الحقوق محفوظة',
+      footerText: ' جميع الحقوق محفوظة 2026©- د.عمر الرواجفة',
     },
     en: {
       dir: 'ltr',
