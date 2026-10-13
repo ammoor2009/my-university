@@ -302,12 +302,29 @@
     return period === 'am' ? t('periodAm') : t('periodPm');
   }
 
-  function formatTimeRange(start, end) {
-    if (!start && !end) return t('notSpecified');
-    if (start && end) return `${start} - ${end}`;
-    if (start) return `${t('timeFrom')} ${start}`;
-    return `${t('timeTo')} ${end}`;
-  }
+  // تحويل الوقت من 24 ساعة إلى 12 ساعة
+function to12Hour(timeStr, periodKey) {
+  if (!timeStr) return timeStr;
+  const m = timeStr.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return timeStr;
+  let h = parseInt(m[1], 10);
+  const mn = m[2];
+  if (isNaN(h)) return timeStr;
+  // تحديد ص/م تلقائيًا
+  const isPM = h >= 12;
+  const suffix = isPM ? ' م' : ' ص';
+  // تحويل الساعة إلى نطاق 1-12
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${mn}${suffix}`;
+}
+
+function formatTimeRange(start, end) {
+  if (!start && !end) return t('notSpecified');
+  if (start && end) return `${to12Hour(start)} - ${to12Hour(end)}`;
+  if (start) return `${t('timeFrom')} ${to12Hour(start)}`;
+  return `${t('timeTo')} ${to12Hour(end)}`;
+}
 
   function sortActivitiesByDay(list) {
     return list.slice().sort((a, b) => {
