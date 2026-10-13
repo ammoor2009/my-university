@@ -479,13 +479,13 @@ td .actions {
 
 .toast.error { background: var(--danger); }
 
-/* ✅ منطقة الطباعة — العرض يتبع المحتوى الداخلي */
+/* ✅ إصلاح: عرض صريح 900px بدل auto — يمنع انهيار العنصر */
 .print-area {
   position: absolute;
-  left: -9999px;
   top: 0;
-  width: auto;
-  background: #fff;
+  left: -20000px;
+  width: 900px;
+  background: #ffffff;
   pointer-events: none;
 }
 
@@ -510,4 +510,4 @@ td .actions {
   table { font-size: .82rem; }
   thead th, tbody td { padding: 9px 10px; }
   .toast { font-size: .84rem; padding: 10px 20px; }
-}
+    }
