@@ -1,20 +1,19 @@
 /* =============================================
    جدولي الجامعي | My University Schedule
-   التصميم: عصري، أكاديمي، متجاوب، دعم RTL/LTR
    ============================================= */
 
-/* ---------- المتغيرات ---------- */
 :root {
-  --primary: #1b3a6b;        /* أزرق أكاديمي داكن */
+  --primary: #1b3a6b;
   --primary-light: #2a5298;
   --primary-soft: #e8eef7;
-  --accent: #c8a44a;         /* ذهبي أكاديمي */
+  --accent: #c8a44a;
   --accent-soft: #faf4e6;
   --bg: #f4f6fa;
   --card-bg: #ffffff;
   --text: #1a1f2e;
   --text-muted: #6b7280;
   --border: #e2e6ee;
+  --row-alt: #fafbfd;
   --danger: #c0392b;
   --danger-soft: #fdecea;
   --success: #1e7e4a;
@@ -27,10 +26,7 @@
   --font-en: 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* ---------- إعادة الضبط ---------- */
-*,
-*::before,
-*::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
@@ -45,9 +41,7 @@ body {
 
 body.lang-en { font-family: var(--font-en); }
 
-/* =============================================
-   الرأس
-   ============================================= */
+/* ====== الرأس ====== */
 .app-header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: #fff;
@@ -60,7 +54,7 @@ body.lang-en { font-family: var(--font-en); }
 .header-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 14px 22px;
+  padding: 12px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -68,8 +62,26 @@ body.lang-en { font-family: var(--font-en); }
   flex-wrap: wrap;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  height: 56px;
+  width: auto;
+  max-width: 110px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  flex-shrink: 0;
+}
+
 .brand-text h1 {
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -.3px;
   line-height: 1.3;
@@ -105,9 +117,7 @@ body.lang-en { font-family: var(--font-en); }
 .lang-switch select:hover { background: rgba(255,255,255,.25); }
 .lang-switch select option { color: #1a1f2e; background: #fff; }
 
-/* =============================================
-   الحاوية
-   ============================================= */
+/* ====== الحاوية ====== */
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -117,9 +127,7 @@ body.lang-en { font-family: var(--font-en); }
   gap: 22px;
 }
 
-/* =============================================
-   البطاقات
-   ============================================= */
+/* ====== البطاقات ====== */
 .card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -145,11 +153,12 @@ body.lang-en { font-family: var(--font-en); }
   font-weight: 700;
   color: var(--primary);
   margin-bottom: 12px;
+  padding-right: 6px;
+  border-right: 4px solid var(--accent);
 }
+body.lang-en .card h3 { border-right: none; border-left: 4px solid var(--accent); padding-right: 0; padding-left: 6px; }
 
-/* =============================================
-   النماذج
-   ============================================= */
+/* ====== النماذج ====== */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -196,7 +205,7 @@ body.lang-en { font-family: var(--font-en); }
 
 .field input::placeholder { color: #a8b0c0; }
 
-/* ---------- الأيام (شرائح اختيار) ---------- */
+/* الأيام */
 .days-grid {
   display: flex;
   flex-wrap: wrap;
@@ -210,11 +219,7 @@ body.lang-en { font-family: var(--font-en); }
   user-select: none;
 }
 
-.day-chip input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
+.day-chip input { position: absolute; opacity: 0; pointer-events: none; }
 
 .day-chip span {
   display: inline-block;
@@ -237,24 +242,11 @@ body.lang-en { font-family: var(--font-en); }
 
 .day-chip:hover span { border-color: var(--primary-light); }
 
-/* ---------- الفترة ---------- */
-.period-options {
-  display: flex;
-  gap: 10px;
-  margin-top: 4px;
-}
+/* الفترة */
+.period-options { display: flex; gap: 10px; margin-top: 4px; }
 
-.radio-chip {
-  position: relative;
-  cursor: pointer;
-  user-select: none;
-}
-
-.radio-chip input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
+.radio-chip { position: relative; cursor: pointer; user-select: none; }
+.radio-chip input { position: absolute; opacity: 0; pointer-events: none; }
 
 .radio-chip span {
   display: inline-block;
@@ -277,7 +269,7 @@ body.lang-en { font-family: var(--font-en); }
 
 .radio-chip:hover span { border-color: var(--accent); }
 
-/* ---------- أزرار النموذج ---------- */
+/* أزرار النموذج */
 .form-actions {
   display: flex;
   gap: 10px;
@@ -296,9 +288,7 @@ body.lang-en { font-family: var(--font-en); }
   display: inline-block;
 }
 
-/* =============================================
-   الأزرار
-   ============================================= */
+/* ====== الأزرار ====== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -318,16 +308,10 @@ body.lang-en { font-family: var(--font-en); }
 
 .btn:active { transform: scale(.97); }
 
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-}
+.btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-light); box-shadow: var(--shadow-hover); }
 
-.btn-secondary {
-  background: #eef1f6;
-  color: var(--text);
-}
+.btn-secondary { background: #eef1f6; color: var(--text); }
 .btn-secondary:hover { background: #e2e6ee; }
 
 .btn-danger {
@@ -337,23 +321,13 @@ body.lang-en { font-family: var(--font-en); }
 }
 .btn-danger:hover { background: #fbdada; }
 
-.btn-word {
-  background: #2b579a;
-  color: #fff;
-}
+.btn-word { background: #2b579a; color: #fff; }
 .btn-word:hover { background: #1e4278; box-shadow: var(--shadow-hover); }
 
-.btn-pdf {
-  background: #b3191e;
-  color: #fff;
-}
+.btn-pdf { background: #b3191e; color: #fff; }
 .btn-pdf:hover { background: #8f1418; box-shadow: var(--shadow-hover); }
 
-.btn-sm {
-  padding: 5px 14px;
-  font-size: .8rem;
-  border-radius: 7px;
-}
+.btn-sm { padding: 5px 14px; font-size: .8rem; border-radius: 7px; }
 
 .btn-edit {
   background: var(--primary-soft);
@@ -369,9 +343,7 @@ body.lang-en { font-family: var(--font-en); }
 }
 .btn-del:hover { background: #fbdada; }
 
-/* =============================================
-   الجداول
-   ============================================= */
+/* ====== الجداول ====== */
 .table-block { margin-bottom: 30px; }
 .table-block:last-child { margin-bottom: 0; }
 
@@ -385,44 +357,43 @@ body.lang-en { font-family: var(--font-en); }
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: .9rem;
-  min-width: 560px;
+  font-size: .92rem;
+  min-width: 620px;
 }
 
-thead {
-  background: var(--primary);
-  color: #fff;
-}
+thead { background: var(--primary); color: #fff; }
 
 thead th {
-  padding: 12px 14px;
+  padding: 13px 14px;
   text-align: right;
   font-weight: 700;
-  font-size: .85rem;
+  font-size: .86rem;
   white-space: nowrap;
+  border-left: 1px solid rgba(255,255,255,.12);
+  letter-spacing: .2px;
 }
+thead th:first-child { border-left: none; }
 
 body.lang-en thead th { text-align: left; }
 
 tbody td {
-  padding: 11px 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   text-align: right;
   vertical-align: middle;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
 body.lang-en tbody td { text-align: left; }
 
+tbody tr:nth-child(even) { background: var(--row-alt); }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: #f7f9fc; }
+tbody tr:hover { background: #eef3fb; }
 
-td .actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-/* ---------- رسالة فراغ ---------- */
+/* رسالة فراغ */
 .empty-msg {
   text-align: center;
   color: var(--text-muted);
@@ -434,9 +405,7 @@ td .actions {
   margin-top: 10px;
 }
 
-/* =============================================
-   قسم التصدير
-   ============================================= */
+/* ====== التصدير ====== */
 .actions-card { text-align: center; }
 
 .export-buttons {
@@ -470,9 +439,7 @@ td .actions {
   display: inline-block;
 }
 
-/* =============================================
-   نافذة التأكيد
-   ============================================= */
+/* ====== نافذة التأكيد ====== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -500,17 +467,13 @@ td .actions {
   font-weight: 600;
   margin-bottom: 22px;
   color: var(--text);
+  white-space: pre-line;
+  line-height: 1.7;
 }
 
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
 
-/* =============================================
-   التوست (رسائل)
-   ============================================= */
+/* ====== التوست ====== */
 .toast {
   position: fixed;
   bottom: 28px;
@@ -538,20 +501,18 @@ td .actions {
 
 .toast.error { background: var(--danger); }
 
-/* =============================================
-   منطقة الطباعة (مخفية)
-   ============================================= */
+/* ====== منطقة الطباعة (خارج الشاشة) ====== */
 .print-area {
-  position: absolute;
-  left: -9999px;
+  position: fixed;
+  left: -20000px;
   top: 0;
-  width: 1100px;
-  background: #fff;
+  width: 1060px;
+  background: #ffffff;
+  z-index: -1;
+  pointer-events: none;
 }
 
-/* =============================================
-   أدوات مساعدة
-   ============================================= */
+/* ====== أدوات ====== */
 .hidden { display: none !important; }
 
 @keyframes fadeIn {
@@ -559,13 +520,13 @@ td .actions {
   to { opacity: 1; }
 }
 
-/* =============================================
-   التجاوب
-   ============================================= */
+/* ====== التجاوب ====== */
 @media (max-width: 640px) {
-  .header-inner { padding: 12px 14px; }
-  .brand-text h1 { font-size: 1.1rem; }
-  .brand-text p { font-size: .78rem; }
+  .header-inner { padding: 10px 14px; }
+  .brand { gap: 10px; }
+  .brand-logo { height: 42px; max-width: 80px; padding: 3px 6px; }
+  .brand-text h1 { font-size: 1.05rem; }
+  .brand-text p { font-size: .75rem; }
   .card { padding: 20px 16px 22px; }
   .form-grid { grid-template-columns: 1fr; }
   .container { padding: 16px 10px 50px; }
@@ -573,7 +534,7 @@ td .actions {
   .radio-chip span { padding: 7px 16px; font-size: .82rem; }
   .export-buttons { flex-direction: column; }
   .export-buttons .btn { width: 100%; }
-  table { font-size: .82rem; }
+  table { font-size: .84rem; min-width: 560px; }
   thead th, tbody td { padding: 9px 10px; }
   .toast { font-size: .84rem; padding: 10px 20px; }
-  }
+   }
