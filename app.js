@@ -10,6 +10,9 @@
   const DAY_KEYS = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu'];
   const DAY_ORDER = { sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thu: 5 };
 
+  // عرض صفحة PDF بالمحتوى (px) — يحدد حجم الخط الظاهر في الملف
+  const PRINT_WIDTH = 900;
+
   const I18N = {
     ar: {
       dir: 'rtl',
@@ -266,7 +269,6 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  // ✅ الإصلاح: استخدام document مباشرة
   function getSelectedDays() {
     const checked = document.querySelectorAll('#daysGrid input[type="checkbox"]:checked');
     return Array.from(checked).map((cb) => cb.value);
@@ -661,6 +663,11 @@
     };
   }
 
+  /* =========================================
+     بناء HTML للطباعة والتصدير (PDF)
+     التصميم الجديد: شعار → جامعة → كلية+قسم → عام+فصل → دكتور
+     ========================================= */
+
   function buildPrintHTML() {
     const ac = getAcademicData();
     const isAr = currentLang === 'ar';
@@ -678,82 +685,122 @@
           <td style="text-align:center">${i + 1}</td>
           <td>${escapeHtml(a.course)}</td>
           <td>${a.days.map(getDayLabel).join('، ')}</td>
-          <td>${getPeriodLabel(a.period)}</td>
-          <td>${formatTimeRange(a.start, a.end)}</td>
-          <td>${escapeHtml(a.room)}</td>
+          <td style="text-align:center">${getPeriodLabel(a.period)}</td>
+          <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
+          <td style="text-align:center">${escapeHtml(a.room)}</td>
         </tr>`).join('')
-      : `<tr><td colspan="6" style="text-align:center;color:#888">${t('lecturesEmpty')}</td></tr>`;
+      : `<tr><td colspan="6" style="text-align:center;color:#888;padding:8px">${t('lecturesEmpty')}</td></tr>`;
 
     const officeRows = officeHours.length
       ? officeHours.map((a, i) => `
         <tr>
           <td style="text-align:center">${i + 1}</td>
           <td>${a.days.map(getDayLabel).join('، ')}</td>
-          <td>${getPeriodLabel(a.period)}</td>
-          <td>${formatTimeRange(a.start, a.end)}</td>
-          <td>${escapeHtml(a.room)}</td>
+          <td style="text-align:center">${getPeriodLabel(a.period)}</td>
+          <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
+          <td style="text-align:center">${escapeHtml(a.room)}</td>
         </tr>`).join('')
-      : `<tr><td colspan="5" style="text-align:center;color:#888">${t('officeEmpty')}</td></tr>`;
+      : `<tr><td colspan="5" style="text-align:center;color:#888;padding:8px">${t('officeEmpty')}</td></tr>`;
 
-    const headerStyle = `font-family:${fontFamily};direction:${dir};text-align:${isAr ? 'right' : 'left'};`;
-    const tableStyle = `width:100%;border-collapse:collapse;margin-bottom:14px;font-family:${fontFamily};direction:${dir};`;
-    const thStyle = `background:#1b3a6b;color:#fff;padding:7px 8px;font-size:11pt;border:1px solid #1b3a6b;text-align:${isAr ? 'right' : 'left'};`;
-    const tdStyle = `padding:6px 8px;border:1px solid #ccd4e0;font-size:10.5pt;text-align:${isAr ? 'right' : 'left'};`;
+    // أنماط مضغوطة لملاءمة A4 أفقي
+    const tableBase = `width:100%;border-collapse:collapse;font-family:${fontFamily};direction:${dir};font-size:10.5pt;table-layout:fixed;`;
+    const thStyle = `background:#1b3a6b;color:#fff;padding:5px 8px;font-weight:700;border:1px solid #14305a;font-size:10.5pt;text-align:${isAr ? 'right' : 'left'};vertical-align:middle;`;
+    const tdStyle = `padding:4px 8px;border:1px solid #c9d3e2;font-size:10.5pt;text-align:${isAr ? 'right' : 'left'};vertical-align:middle;line-height:1.35;`;
 
-    const logoHtml = `
-      <div style="text-align:center;margin-bottom:8px;">
-        <img src="${LOGO_PATH}" alt="" style="height:70px;object-fit:contain;" onerror="this.style.display='none'" />
-      </div>`;
-
-    const infoHtml = `
-      <div style="${headerStyle}font-size:11pt;line-height:1.7;margin-bottom:10px;">
-        <div style="font-size:15pt;font-weight:800;color:#1b3a6b;margin-bottom:4px;">${t('printUniversity')}</div>
-        <div><strong>${t('printFaculty')}:</strong> ${escapeHtml(ac.facultyName)}</div>
-        <div><strong>${t('printCollege')}:</strong> ${escapeHtml(ac.collegeName)} &nbsp;|&nbsp; <strong>${t('printDepartment')}:</strong> ${escapeHtml(ac.departmentName)}</div>
-        <div><strong>${t('printSemester')}:</strong> ${escapeHtml(ac.semester)} &nbsp;|&nbsp; <strong>${t('printYear')}:</strong> ${escapeHtml(ac.academicYear)}</div>
-      </div>`;
-
-    const titleHtml = `
-      <h2 style="${headerStyle}text-align:center;font-size:13pt;font-weight:800;color:#1b3a6b;margin:6px 0 12px;border-bottom:2px solid #c8a44a;padding-bottom:6px;">
-        ${t('pdfTitle')}
-      </h2>`;
-
-    const lecturesTable = `
-      <h3 style="${headerStyle}font-size:11.5pt;font-weight:700;color:#1b3a6b;margin:10px 0 5px;">${t('lecturesTitle')}</h3>
-      <table style="${tableStyle}">
-        <thead><tr>
-          <th style="${thStyle}width:5%">${t('thNum')}</th>
-          <th style="${thStyle}width:22%">${t('thCourse')}</th>
-          <th style="${thStyle}width:16%">${t('thDay')}</th>
-          <th style="${thStyle}width:13%">${t('thPeriod')}</th>
-          <th style="${thStyle}width:22%">${t('thTime')}</th>
-          <th style="${thStyle}width:22%">${t('thRoom')}</th>
-        </tr></thead>
-        <tbody>${lectureRows}</tbody>
-      </table>`;
-
-    const officeTable = `
-      <h3 style="${headerStyle}font-size:11.5pt;font-weight:700;color:#1b3a6b;margin:10px 0 5px;">${t('officeTitle')}</h3>
-      <table style="${tableStyle}">
-        <thead><tr>
-          <th style="${thStyle}width:6%">${t('thONum')}</th>
-          <th style="${thStyle}width:22%">${t('thODay')}</th>
-          <th style="${thStyle}width:18%">${t('thOPeriod')}</th>
-          <th style="${thStyle}width:28%">${t('thOTime')}</th>
-          <th style="${thStyle}width:26%">${t('thORoom')}</th>
-        </tr></thead>
-        <tbody>${officeRows}</tbody>
-      </table>`;
+    // ترتيب البيانات الأكاديمية حسب طلب المستخدم:
+    // 1) شعار  2) جامعة  3) كلية + قسم  4) عام + فصل  5) اسم الدكتور
+    const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
     return `
-      <div style="width:1050px;margin:0 auto;padding:28px 30px;background:#fff;direction:${dir};font-family:${fontFamily};">
-        ${logoHtml}
-        ${infoHtml}
-        ${titleHtml}
-        ${lecturesTable}
-        ${officeTable}
-      </div>`;
+    <div style="width:${PRINT_WIDTH}px;background:#ffffff;padding:10px 16px 12px;box-sizing:border-box;direction:${dir};font-family:${fontFamily};color:#1a1f2e;">
+
+      <!-- الشعار -->
+      <div style="text-align:center;margin-bottom:6px;">
+        <img src="${LOGO_PATH}" alt="" style="height:85px;width:auto;max-width:140px;object-fit:contain;display:inline-block;"
+             onerror="this.style.display='none'" />
+      </div>
+
+      <!-- اسم الجامعة -->
+      <div style="text-align:center;font-size:14pt;font-weight:800;color:#1b3a6b;line-height:1.25;margin-bottom:5px;">
+        ${t('printUniversity')}
+      </div>
+
+      <!-- الكلية + القسم -->
+      <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:2px;">
+        <strong style="color:#1b3a6b;">${t('printCollege')}:</strong> ${escapeHtml(ac.collegeName)}${sep}<strong style="color:#1b3a6b;">${t('printDepartment')}:</strong> ${escapeHtml(ac.departmentName)}
+      </div>
+
+      <!-- العام الدراسي + الفصل (العام أولًا) -->
+      <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:2px;">
+        <strong style="color:#1b3a6b;">${t('printYear')}:</strong> ${escapeHtml(ac.academicYear)}${sep}<strong style="color:#1b3a6b;">${t('printSemester')}:</strong> ${escapeHtml(ac.semester)}
+      </div>
+
+      <!-- اسم عضو هيئة التدريس -->
+      <div style="text-align:center;font-size:11pt;line-height:1.5;margin-bottom:8px;">
+        <strong style="color:#1b3a6b;">${t('printFaculty')}:</strong> ${escapeHtml(ac.facultyName)}
+      </div>
+
+      <!-- عنوان الجدول -->
+      <div style="text-align:center;font-size:12.5pt;font-weight:800;color:#1b3a6b;border-top:2px solid #c8a44a;border-bottom:2px solid #c8a44a;padding:4px 0;margin-bottom:8px;">
+        ${t('pdfTitle')}
+      </div>
+
+      <!-- جدول المحاضرات -->
+      <div style="font-size:12pt;font-weight:800;color:#1b3a6b;margin:0 0 4px;padding-${isAr ? 'right' : 'left'}:8px;border-${isAr ? 'right' : 'left'}:4px solid #c8a44a;">
+        ${t('lecturesTitle')}
+      </div>
+      <table style="${tableBase}">
+        <colgroup>
+          <col style="width:5%" />
+          <col style="width:26%" />
+          <col style="width:17%" />
+          <col style="width:12%" />
+          <col style="width:22%" />
+          <col style="width:18%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="${thStyle}text-align:center;">${t('thNum')}</th>
+            <th style="${thStyle}">${t('thCourse')}</th>
+            <th style="${thStyle}">${t('thDay')}</th>
+            <th style="${thStyle}text-align:center;">${t('thPeriod')}</th>
+            <th style="${thStyle}text-align:center;">${t('thTime')}</th>
+            <th style="${thStyle}text-align:center;">${t('thRoom')}</th>
+          </tr>
+        </thead>
+        <tbody>${lectureRows}</tbody>
+      </table>
+
+      <!-- جدول الساعات المكتبية -->
+      <div style="font-size:12pt;font-weight:800;color:#1b3a6b;margin:10px 0 4px;padding-${isAr ? 'right' : 'left'}:8px;border-${isAr ? 'right' : 'left'}:4px solid #c8a44a;">
+        ${t('officeTitle')}
+      </div>
+      <table style="${tableBase}">
+        <colgroup>
+          <col style="width:6%" />
+          <col style="width:24%" />
+          <col style="width:16%" />
+          <col style="width:30%" />
+          <col style="width:24%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="${thStyle}text-align:center;">${t('thONum')}</th>
+            <th style="${thStyle}">${t('thODay')}</th>
+            <th style="${thStyle}text-align:center;">${t('thOPeriod')}</th>
+            <th style="${thStyle}text-align:center;">${t('thOTime')}</th>
+            <th style="${thStyle}text-align:center;">${t('thORoom')}</th>
+          </tr>
+        </thead>
+        <tbody>${officeRows}</tbody>
+      </table>
+
+    </div>`;
   }
+
+  /* =========================================
+     تصدير Word — نفس الترتيب ونفس RTL
+     ========================================= */
 
   function exportToWord() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
@@ -766,94 +813,137 @@
 
       const ac = getAcademicData();
       const isAr = currentLang === 'ar';
-      const fontName = isAr ? 'Tajawal' : 'Calibri';
+      const fontName = isAr ? 'Arial' : 'Calibri';
 
       const lectures = sortActivitiesByDay(activities.filter((a) => a.type === 'lecture'));
       const officeHours = sortActivitiesByDay(activities.filter((a) => a.type === 'office'));
 
       const borderDef = {
-        top: { style: BorderStyle.SINGLE, size: 4, color: 'CCD4E0' },
-        bottom: { style: BorderStyle.SINGLE, size: 4, color: 'CCD4E0' },
-        left: { style: BorderStyle.SINGLE, size: 4, color: 'CCD4E0' },
-        right: { style: BorderStyle.SINGLE, size: 4, color: 'CCD4E0' },
+        top: { style: BorderStyle.SINGLE, size: 4, color: 'C9D3E2' },
+        bottom: { style: BorderStyle.SINGLE, size: 4, color: 'C9D3E2' },
+        left: { style: BorderStyle.SINGLE, size: 4, color: 'C9D3E2' },
+        right: { style: BorderStyle.SINGLE, size: 4, color: 'C9D3E2' },
       };
 
       const children = [];
 
-      if (window.__logoBase64) {
+      // helper: فقرة مركزية
+      function centeredPara(runs, opts) {
+        opts = opts || {};
+        return new Paragraph({
+          alignment: AlignmentType.CENTER,
+          bidirectional: isAr,
+          spacing: { after: opts.after != null ? opts.after : 60, before: opts.before || 0 },
+          children: runs,
+        });
+      }
+
+      // helper: نص عادي
+      function run(text, size, opts) {
+        opts = opts || {};
+        return new TextRun({
+          text: String(text || ''),
+          font: fontName,
+          size: size,
+          bold: !!opts.bold,
+          color: opts.color || '1A1F2E',
+          rightToLeft: isAr,
+        });
+      }
+
+      // 1) الشعار
+      if (window.__logoBase64 && window.__logoDimensions) {
         try {
           const base64 = window.__logoBase64.split(',')[1];
           const binary = atob(base64);
           const bytes = new Uint8Array(binary.length);
           for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
 
-          children.push(new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new ImageRun({ data: bytes, transformation: { width: 130, height: 90 } })],
-          }));
-        } catch (e) {}
+          const { w, h } = window.__logoDimensions;
+          const maxW = 120, maxH = 80;
+          let drawW = maxW, drawH = (h / w) * maxW;
+          if (drawH > maxH) { drawH = maxH; drawW = (w / h) * maxH; }
+
+          children.push(centeredPara([new ImageRun({
+            data: bytes,
+            transformation: { width: Math.round(drawW), height: Math.round(drawH) },
+          })], { after: 40 }));
+        } catch (e) { console.warn('logo embed error:', e); }
       }
 
-      const infoLines = [
-        t('printUniversity'),
-        `${t('printFaculty')}: ${ac.facultyName}`,
-        `${t('printCollege')}: ${ac.collegeName}`,
-        `${t('printDepartment')}: ${ac.departmentName}`,
-        `${t('printSemester')}: ${ac.semester}`,
-        `${t('printYear')}: ${ac.academicYear}`,
-      ];
+      // 2) اسم الجامعة
+      children.push(centeredPara([run(t('printUniversity'), 30, { bold: true, color: '1B3A6B' })], { after: 60 }));
 
-      infoLines.forEach((line, i) => {
-        children.push(new Paragraph({
-          alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
-          spacing: { after: i === infoLines.length - 1 ? 200 : 40 },
-          children: [new TextRun({
-            text: line, font: fontName,
-            size: i === 0 ? 32 : 22,
-            bold: i === 0,
-            color: i === 0 ? '1B3A6B' : '1A1F2E',
-          })],
-        }));
-      });
+      // 3) الكلية + القسم
+      children.push(centeredPara([
+        run(t('printCollege') + ': ', 22, { bold: true, color: '1B3A6B' }),
+        run(ac.collegeName, 22),
+        run('   |   ', 22, { color: 'C8A44A' }),
+        run(t('printDepartment') + ': ', 22, { bold: true, color: '1B3A6B' }),
+        run(ac.departmentName, 22),
+      ], { after: 30 }));
 
-      children.push(new Paragraph({
-        alignment: AlignmentType.CENTER,
-        spacing: { before: 100, after: 200 },
-        children: [new TextRun({ text: t('wordTitle'), font: fontName, size: 26, bold: true, color: '1B3A6B' })],
-      }));
+      // 4) العام الدراسي + الفصل (العام أولًا)
+      children.push(centeredPara([
+        run(t('printYear') + ': ', 22, { bold: true, color: '1B3A6B' }),
+        run(ac.academicYear, 22),
+        run('   |   ', 22, { color: 'C8A44A' }),
+        run(t('printSemester') + ': ', 22, { bold: true, color: '1B3A6B' }),
+        run(ac.semester, 22),
+      ], { after: 30 }));
 
+      // 5) اسم عضو هيئة التدريس
+      children.push(centeredPara([
+        run(t('printFaculty') + ': ', 22, { bold: true, color: '1B3A6B' }),
+        run(ac.facultyName, 22),
+      ], { after: 160 }));
+
+      // 6) عنوان الجدول
+      children.push(centeredPara([
+        run(t('wordTitle'), 26, { bold: true, color: '1B3A6B' }),
+      ], { after: 160 }));
+
+      // دالة خلية (مع RTL)
       function makeCell(text, opts) {
         opts = opts || {};
         return new TableCell({
           borders: borderDef,
           width: opts.width ? { size: opts.width, type: WidthType.PERCENTAGE } : undefined,
           shading: opts.header ? { fill: '1B3A6B' } : undefined,
+          verticalAlign: 'center',
           children: [new Paragraph({
-            alignment: opts.center ? AlignmentType.CENTER : (isAr ? AlignmentType.RIGHT : AlignmentType.LEFT),
+            bidirectional: isAr,
+            alignment: opts.center
+              ? AlignmentType.CENTER
+              : (isAr ? AlignmentType.RIGHT : AlignmentType.LEFT),
             children: [new TextRun({
-              text: String(text || ''), font: fontName,
-              size: opts.header ? 20 : 19,
+              text: String(text || ''),
+              font: fontName,
+              size: opts.header ? 22 : 22,
               bold: !!opts.header,
               color: opts.header ? 'FFFFFF' : '1A1F2E',
+              rightToLeft: isAr,
             })],
           })],
         });
       }
 
+      // عنوان جدول المحاضرات
       children.push(new Paragraph({
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
-        spacing: { before: 100, after: 80 },
-        children: [new TextRun({ text: t('lecturesTitle'), font: fontName, size: 24, bold: true, color: '1B3A6B' })],
+        bidirectional: isAr,
+        spacing: { before: 60, after: 80 },
+        children: [run(t('lecturesTitle'), 24, { bold: true, color: '1B3A6B' })],
       }));
 
       const lectureHeader = new TableRow({
         tableHeader: true,
         children: [
           makeCell(t('thNum'), { header: true, center: true, width: 6 }),
-          makeCell(t('thCourse'), { header: true, width: 24 }),
-          makeCell(t('thDay'), { header: true, width: 18 }),
-          makeCell(t('thPeriod'), { header: true, center: true, width: 14 }),
-          makeCell(t('thTime'), { header: true, center: true, width: 20 }),
+          makeCell(t('thCourse'), { header: true, width: 26 }),
+          makeCell(t('thDay'), { header: true, width: 17 }),
+          makeCell(t('thPeriod'), { header: true, center: true, width: 12 }),
+          makeCell(t('thTime'), { header: true, center: true, width: 21 }),
           makeCell(t('thRoom'), { header: true, center: true, width: 18 }),
         ],
       });
@@ -869,12 +959,18 @@
         ],
       }));
 
-      children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [lectureHeader, ...lectureRows] }));
+      children.push(new Table({
+        visuallyRightToLeft: isAr,
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [lectureHeader, ...lectureRows],
+      }));
 
+      // عنوان جدول الساعات المكتبية
       children.push(new Paragraph({
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
-        spacing: { before: 260, after: 80 },
-        children: [new TextRun({ text: t('officeTitle'), font: fontName, size: 24, bold: true, color: '1B3A6B' })],
+        bidirectional: isAr,
+        spacing: { before: 220, after: 80 },
+        children: [run(t('officeTitle'), 24, { bold: true, color: '1B3A6B' })],
       }));
 
       const officeHeader = new TableRow({
@@ -882,8 +978,8 @@
         children: [
           makeCell(t('thONum'), { header: true, center: true, width: 7 }),
           makeCell(t('thODay'), { header: true, width: 24 }),
-          makeCell(t('thOPeriod'), { header: true, center: true, width: 18 }),
-          makeCell(t('thOTime'), { header: true, center: true, width: 27 }),
+          makeCell(t('thOPeriod'), { header: true, center: true, width: 16 }),
+          makeCell(t('thOTime'), { header: true, center: true, width: 29 }),
           makeCell(t('thORoom'), { header: true, center: true, width: 24 }),
         ],
       });
@@ -898,14 +994,18 @@
         ],
       }));
 
-      children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [officeHeader, ...officeRows] }));
+      children.push(new Table({
+        visuallyRightToLeft: isAr,
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [officeHeader, ...officeRows],
+      }));
 
       const doc = new Document({
         sections: [{
           properties: {
             page: {
               size: { orientation: 'landscape', width: 16838, height: 11906 },
-              margin: { top: 720, right: 720, bottom: 720, left: 720 },
+              margin: { top: 560, right: 560, bottom: 560, left: 560 },
             },
           },
           children,
@@ -919,8 +1019,15 @@
         saveAs(blob, fname);
       }).catch(() => showToast(t('msgExportError'), true));
 
-    } catch (err) { showToast(t('msgExportError'), true); }
+    } catch (err) {
+      console.error('Word error:', err);
+      showToast(t('msgExportError'), true);
+    }
   }
+
+  /* =========================================
+     تصدير PDF — هوامش مضغوطة لصفحة واحدة
+     ========================================= */
 
   function exportToPdf() {
     if (activities.length === 0) { showToast(t('msgNoData'), true); return; }
@@ -929,6 +1036,8 @@
       showToast(t('msgExporting'));
       const html = buildPrintHTML();
       el.printArea.innerHTML = html;
+
+      const target = el.printArea.firstElementChild;
 
       const imgs = el.printArea.querySelectorAll('img');
       const imgPromises = Array.from(imgs).map((img) => new Promise((resolve) => {
@@ -944,22 +1053,40 @@
         });
 
         const opt = {
-          margin: [6, 8, 6, 8],
+          margin: [5, 6, 5, 6],               // هوامش صغيرة متوازنة
           filename: currentLang === 'ar'
             ? `جدول_المحاضرات_${getAcademicData().facultyName || 'عضو_الهيئة'}.pdf`
             : `Schedule_${(getAcademicData().facultyName || 'Faculty').replace(/\s+/g, '_')}.pdf`,
           image: { type: 'jpeg', quality: 0.96 },
-          html2canvas: { scale: 2, useCORS: true, allowTaint: false, letterRendering: true, logging: false, backgroundColor: '#ffffff' },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            letterRendering: true,
+            logging: false,
+            backgroundColor: '#ffffff',
+            width: PRINT_WIDTH,
+            windowWidth: PRINT_WIDTH,
+            scrollX: 0,
+            scrollY: 0,
+          },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
-          pagebreak: { mode: ['css', 'legacy'] },
+          pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] },
         };
 
-        html2pdf().set(opt).from(el.printArea.firstElementChild).save()
+        html2pdf().set(opt).from(target).save()
           .then(() => { el.printArea.innerHTML = ''; })
-          .catch(() => { el.printArea.innerHTML = ''; showToast(t('msgExportError'), true); });
+          .catch((err) => {
+            console.error('PDF error:', err);
+            el.printArea.innerHTML = '';
+            showToast(t('msgExportError'), true);
+          });
       });
 
-    } catch (err) { showToast(t('msgExportError'), true); }
+    } catch (err) {
+      console.error('PDF error:', err);
+      showToast(t('msgExportError'), true);
+    }
   }
 
   function preloadLogoAsBase64() {
@@ -973,6 +1100,7 @@
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         window.__logoBase64 = canvas.toDataURL('image/png');
+        window.__logoDimensions = { w: img.naturalWidth, h: img.naturalHeight };
       } catch (e) {}
     };
     img.src = LOGO_PATH;
