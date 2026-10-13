@@ -724,8 +724,8 @@ function formatTimeRange(start, end) {
     const sep = `<span style="color:#c8a44a;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>`;
 
     return `
-    <div style="text-align:center;margin-bottom:0;">
-  <img src="${LOGO_PATH}" alt="" style="height:105px;width:auto;max-width:170px;object-fit:contain;display:inline-block;"
+    <div style="text-align:center;margin-bottom:2px;">
+  <img src="${LOGO_PATH}" alt="" style="height:92px;width:auto;max-width:155px;object-fit:contain;display:inline-block;"
        onerror="this.style.display='none'" />
 </div>
 
