@@ -727,7 +727,7 @@ function formatTimeRange(start, end) {
 <div style="width:${PRINT_WIDTH}px;background:#ffffff;padding:10px 16px 12px;box-sizing:border-box;direction:${dir};font-family:${fontFamily};color:#1a1f2e;">
 
   <div style="text-align:center;margin:0;line-height:1;">
-    <img src="${LOGO_PATH}" alt="" style="height:95px;width:auto;max-width:155px;object-fit:contain;display:inline-block;margin-bottom:-8px;"
+    <img src="${LOGO_PATH}" alt="" style="height:100px;width:auto;max-width:165px;object-fit:contain;display:inline-block;margin-bottom:-8px;"
          onerror="this.style.display='none'" />
   </div>
 
