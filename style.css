@@ -214,45 +214,6 @@ body.lang-en { font-family: var(--font-en); }
 
 .day-chip:hover span { border-color: var(--primary-light); }
 
-.period-options {
-  display: flex;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.radio-chip {
-  position: relative;
-  cursor: pointer;
-  user-select: none;
-}
-
-.radio-chip input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.radio-chip span {
-  display: inline-block;
-  padding: 8px 22px;
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  font-size: .88rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: #fbfcfe;
-  transition: all .2s;
-}
-
-.radio-chip input:checked + span {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(200,164,74,.3);
-}
-
-.radio-chip:hover span { border-color: var(--accent); }
-
 .form-actions {
   display: flex;
   gap: 10px;
@@ -520,10 +481,9 @@ body.lang-en .app-footer { font-family: var(--font-en); }
   .form-grid { grid-template-columns: 1fr; }
   .container { padding: 16px 10px 50px; }
   .day-chip span { padding: 7px 13px; font-size: .82rem; }
-  .radio-chip span { padding: 7px 16px; font-size: .82rem; }
   .export-buttons { flex-direction: column; }
   .export-buttons .btn { width: 100%; }
   table { font-size: .82rem; }
   thead th, tbody td { padding: 9px 10px; }
   .toast { font-size: .84rem; padding: 10px 20px; }
-    }
+  }
