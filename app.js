@@ -822,31 +822,31 @@
         } catch (e) { console.warn('logo embed error:', e); }
       }
 
-      children.push(centeredPara([run(t('printUniversity'), 30, { bold: true, color: '1B3A6B' })], { after: 60 }));
+      children.push(centeredPara([run(t('printUniversity'), 34, { bold: true, color: '1B3A6B' })], { after: 60 }));
 
       children.push(centeredPara([
-        run(t('printCollege') + ': ', 22, { bold: true, color: '1B3A6B' }),
-        run(ac.collegeName, 22),
-        run('   |   ', 22, { color: 'C8A44A' }),
-        run(t('printDepartment') + ': ', 22, { bold: true, color: '1B3A6B' }),
-        run(ac.departmentName, 22),
+        run(t('printCollege') + ': ', 25, { bold: true, color: '1B3A6B' }),
+        run(ac.collegeName, 25),
+        run('   |   ', 25, { color: 'C8A44A' }),
+        run(t('printDepartment') + ': ', 25, { bold: true, color: '1B3A6B' }),
+        run(ac.departmentName, 25),
       ], { after: 30 }));
 
       children.push(centeredPara([
-        run(t('printYear') + ': ', 22, { bold: true, color: '1B3A6B' }),
-        run(ac.academicYear, 22),
-        run('   |   ', 22, { color: 'C8A44A' }),
-        run(t('printSemester') + ': ', 22, { bold: true, color: '1B3A6B' }),
-        run(ac.semester, 22),
+        run(t('printYear') + ': ', 25, { bold: true, color: '1B3A6B' }),
+        run(ac.academicYear, 25),
+        run('   |   ', 25, { color: 'C8A44A' }),
+        run(t('printSemester') + ': ', 25, { bold: true, color: '1B3A6B' }),
+        run(ac.semester, 25),
       ], { after: 30 }));
 
       children.push(centeredPara([
-        run(t('printFaculty') + ': ', 22, { bold: true, color: '1B3A6B' }),
-        run(ac.facultyName, 22),
+        run(t('printFaculty') + ': ', 25, { bold: true, color: '1B3A6B' }),
+        run(ac.facultyName, 25),
       ], { after: 160 }));
 
       children.push(centeredPara([
-        run(t('wordTitle'), 26, { bold: true, color: '1B3A6B' }),
+        run(t('wordTitle'), 28, { bold: true, color: '1B3A6B' }),
       ], { after: 160 }));
 
       function makeCell(text, opts) {
@@ -862,7 +862,7 @@
             children: [new TextRun({
               text: String(text || ''),
               font: fontName,
-              size: opts.header ? 22 : 22,
+              size: opts.header ? 25 : 25,
               bold: !!opts.header,
               color: opts.header ? 'FFFFFF' : '1A1F2E',
               rightToLeft: isAr,
@@ -875,7 +875,7 @@
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
         bidirectional: isAr,
         spacing: { before: 60, after: 80 },
-        children: [run(t('lecturesTitle'), 24, { bold: true, color: '1B3A6B' })],
+        children: [run(t('lecturesTitle'), 28, { bold: true, color: '1B3A6B' })],
       }));
 
       const lectureHeader = new TableRow({
@@ -909,7 +909,7 @@
         alignment: isAr ? AlignmentType.RIGHT : AlignmentType.LEFT,
         bidirectional: isAr,
         spacing: { before: 220, after: 80 },
-        children: [run(t('officeTitle'), 24, { bold: true, color: '1B3A6B' })],
+        children: [run(t('officeTitle'), 28, { bold: true, color: '1B3A6B' })],
       }));
 
       const officeHeader = new TableRow({
