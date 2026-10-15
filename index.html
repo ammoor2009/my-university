@@ -114,20 +114,6 @@
         </div>
       </div>
 
-      <div class="field full-width">
-        <label id="labelPeriod">الفترة</label>
-        <div class="period-options" id="periodOptions">
-          <label class="radio-chip">
-            <input type="radio" name="period" value="am" checked />
-            <span id="periodAm">صباحًا</span>
-          </label>
-          <label class="radio-chip">
-            <input type="radio" name="period" value="pm" />
-            <span id="periodPm">مساءً</span>
-          </label>
-        </div>
-      </div>
-
       <div class="form-grid">
         <div class="field">
           <label for="startTime" id="labelStartTime">وقت البداية (اختياري)</label>
@@ -158,7 +144,6 @@
                 <th id="thNum">#</th>
                 <th id="thCourse">اسم المساق</th>
                 <th id="thDay">اليوم</th>
-                <th id="thPeriod">الفترة</th>
                 <th id="thTime">الوقت</th>
                 <th id="thRoom">القاعة</th>
                 <th id="thActions">الإجراءات</th>
@@ -178,7 +163,6 @@
               <tr>
                 <th id="thONum">#</th>
                 <th id="thODay">اليوم</th>
-                <th id="thOPeriod">الفترة</th>
                 <th id="thOTime">الوقت</th>
                 <th id="thORoom">المكتب</th>
                 <th id="thOActions">الإجراءات</th>
@@ -204,13 +188,12 @@
     </section>
 
   </main>
-</main>
 
-<footer class="app-footer">
-  <p id="footerText"> جميع الحقوق محفوظة 2026©- د.عمر الرواجفة</p>
-</footer>
+  <footer class="app-footer">
+    <p id="footerText"> جميع الحقوق محفوظة 2026©- د.عمر الرواجفة</p>
+  </footer>
 
-<!-- نافذة تأكيد -->
+  <!-- نافذة تأكيد -->
   <div class="modal-overlay hidden" id="confirmOverlay">
     <div class="modal-box">
       <p id="confirmMessage">هل أنت متأكد؟</p>
