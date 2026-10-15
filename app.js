@@ -44,8 +44,6 @@
       labelDays: 'اليوم / الأيام',
       daySat: 'السبت', daySun: 'الأحد', dayMon: 'الاثنين',
       dayTue: 'الثلاثاء', dayWed: 'الأربعاء', dayThu: 'الخميس',
-      labelPeriod: 'الفترة',
-      periodAm: 'صباحًا', periodPm: 'مساءً',
       labelStartTime: 'وقت البداية (اختياري)',
       labelEndTime: 'وقت النهاية (اختياري)',
       addBtn: 'إضافة إلى الجدول',
@@ -56,8 +54,8 @@
       lecturesTitle: 'جدول المحاضرات',
       officeTitle: 'جدول الساعات المكتبية',
       thNum: '#', thCourse: 'اسم المساق', thDay: 'اليوم',
-      thPeriod: 'الفترة', thTime: 'الوقت', thRoom: 'القاعة', thActions: 'الإجراءات',
-      thONum: '#', thODay: 'اليوم', thOPeriod: 'الفترة',
+      thTime: 'الوقت', thRoom: 'القاعة', thActions: 'الإجراءات',
+      thONum: '#', thODay: 'اليوم',
       thOTime: 'الوقت', thORoom: 'المكتب', thOActions: 'الإجراءات',
       lecturesEmpty: 'لا توجد محاضرات بعد. أضف أول محاضرة من النموذج أعلاه.',
       officeEmpty: 'لا توجد ساعات مكتبية بعد. أضف أول ساعة من النموذج أعلاه.',
@@ -91,8 +89,6 @@
       printSemester: 'الفصل الدراسي',
       printYear: 'العام الدراسي',
       printUniversity: 'جامعة فيلادلفيا',
-      periodLabelAm: 'صباحًا',
-      periodLabelPm: 'مساءً',
       timeFrom: 'من', timeTo: 'إلى', notSpecified: '—',
       footerText: ' جميع الحقوق محفوظة 2026©- د.عمر الرواجفة',
     },
@@ -127,8 +123,6 @@
       labelDays: 'Day(s)',
       daySat: 'Saturday', daySun: 'Sunday', dayMon: 'Monday',
       dayTue: 'Tuesday', dayWed: 'Wednesday', dayThu: 'Thursday',
-      labelPeriod: 'Period',
-      periodAm: 'AM', periodPm: 'PM',
       labelStartTime: 'Start Time (optional)',
       labelEndTime: 'End Time (optional)',
       addBtn: 'Add to Schedule',
@@ -139,8 +133,8 @@
       lecturesTitle: 'Lectures Schedule',
       officeTitle: 'Office Hours Schedule',
       thNum: '#', thCourse: 'Course Name', thDay: 'Day',
-      thPeriod: 'Period', thTime: 'Time', thRoom: 'Room', thActions: 'Actions',
-      thONum: '#', thODay: 'Day', thOPeriod: 'Period',
+      thTime: 'Time', thRoom: 'Room', thActions: 'Actions',
+      thONum: '#', thODay: 'Day',
       thOTime: 'Time', thORoom: 'Office', thOActions: 'Actions',
       lecturesEmpty: 'No lectures yet. Add your first lecture from the form above.',
       officeEmpty: 'No office hours yet. Add your first office hour from the form above.',
@@ -174,8 +168,6 @@
       printSemester: 'Semester',
       printYear: 'Academic Year',
       printUniversity: 'Philadelphia University',
-      periodLabelAm: 'AM',
-      periodLabelPm: 'PM',
       timeFrom: 'From', timeTo: 'To', notSpecified: '—',
       footerText: '© 2026 Dr. Omar Al-Rawajfeh — All Rights Reserved',
     }
@@ -219,9 +211,6 @@
     labelRoom: $('labelRoom'),
     roomNumber: $('roomNumber'),
     labelDays: $('labelDays'),
-    labelPeriod: $('labelPeriod'),
-    periodAm: $('periodAm'),
-    periodPm: $('periodPm'),
     labelStartTime: $('labelStartTime'),
     startTime: $('startTime'),
     labelEndTime: $('labelEndTime'),
@@ -235,13 +224,11 @@
     thNum: $('thNum'),
     thCourse: $('thCourse'),
     thDay: $('thDay'),
-    thPeriod: $('thPeriod'),
     thTime: $('thTime'),
     thRoom: $('thRoom'),
     thActions: $('thActions'),
     thONum: $('thONum'),
     thODay: $('thODay'),
-    thOPeriod: $('thOPeriod'),
     thOTime: $('thOTime'),
     thORoom: $('thORoom'),
     thOActions: $('thOActions'),
@@ -276,11 +263,6 @@
     return Array.from(checked).map((cb) => cb.value);
   }
 
-  function getSelectedPeriod() {
-    const radio = document.querySelector('input[name="period"]:checked');
-    return radio ? radio.value : 'am';
-  }
-
   function getSemesterLabel(value) {
     const map = { first: t('semFirst'), second: t('semSecond'), summer: t('semSummer') };
     return map[value] || value;
@@ -294,37 +276,29 @@
     return map[key] || key;
   }
 
-  function getPeriodLabel(period) {
-    return period === 'am' ? t('periodLabelAm') : t('periodLabelPm');
-  }
-
-  function getPeriodShort(period) {
-    return period === 'am' ? t('periodAm') : t('periodPm');
-  }
-
   // تحويل الوقت من 24 ساعة إلى 12 ساعة
-function to12Hour(timeStr, periodKey) {
-  if (!timeStr) return timeStr;
-  const m = timeStr.match(/^(\d{1,2}):(\d{2})$/);
-  if (!m) return timeStr;
-  let h = parseInt(m[1], 10);
-  const mn = m[2];
-  if (isNaN(h)) return timeStr;
-  // تحديد ص/م تلقائيًا
-  const isPM = h >= 12;
-  const suffix = isPM ? ' م' : ' ص';
-  // تحويل الساعة إلى نطاق 1-12
-  h = h % 12;
-  if (h === 0) h = 12;
-  return `${h}:${mn}${suffix}`;
-}
+  function to12Hour(timeStr, periodKey) {
+    if (!timeStr) return timeStr;
+    const m = timeStr.match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return timeStr;
+    let h = parseInt(m[1], 10);
+    const mn = m[2];
+    if (isNaN(h)) return timeStr;
+    // تحديد ص/م تلقائيًا
+    const isPM = h >= 12;
+    const suffix = isPM ? ' م' : ' ص';
+    // تحويل الساعة إلى نطاق 1-12
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${h}:${mn}${suffix}`;
+  }
 
-function formatTimeRange(start, end) {
-  if (!start && !end) return t('notSpecified');
-  if (start && end) return `${to12Hour(start)} - ${to12Hour(end)}`;
-  if (start) return `${t('timeFrom')} ${to12Hour(start)}`;
-  return `${t('timeTo')} ${to12Hour(end)}`;
-}
+  function formatTimeRange(start, end) {
+    if (!start && !end) return t('notSpecified');
+    if (start && end) return `${to12Hour(start)} - ${to12Hour(end)}`;
+    if (start) return `${t('timeFrom')} ${to12Hour(start)}`;
+    return `${t('timeTo')} ${to12Hour(end)}`;
+  }
 
   function sortActivitiesByDay(list) {
     return list.slice().sort((a, b) => {
@@ -379,9 +353,6 @@ function formatTimeRange(start, end) {
     el.labelRoom.textContent = t('roomNumber');
     el.roomNumber.placeholder = t('roomPlaceholder');
     el.labelDays.textContent = t('labelDays');
-    el.labelPeriod.textContent = t('labelPeriod');
-    el.periodAm.textContent = t('periodAm');
-    el.periodPm.textContent = t('periodPm');
     el.labelStartTime.textContent = t('labelStartTime');
     el.labelEndTime.textContent = t('labelEndTime');
     el.addBtn.textContent = editingId ? t('saveEditBtn') : t('addBtn');
@@ -403,13 +374,11 @@ function formatTimeRange(start, end) {
     el.thNum.textContent = t('thNum');
     el.thCourse.textContent = t('thCourse');
     el.thDay.textContent = t('thDay');
-    el.thPeriod.textContent = t('thPeriod');
     el.thTime.textContent = t('thTime');
     el.thRoom.textContent = t('thRoom');
     el.thActions.textContent = t('thActions');
     el.thONum.textContent = t('thONum');
     el.thODay.textContent = t('thODay');
-    el.thOPeriod.textContent = t('thOPeriod');
     el.thOTime.textContent = t('thOTime');
     el.thORoom.textContent = t('thORoom');
     el.thOActions.textContent = t('thOActions');
@@ -474,7 +443,6 @@ function formatTimeRange(start, end) {
           <td>${idx + 1}</td>
           <td>${escapeHtml(act.course)}</td>
           <td>${act.days.map(getDayLabel).join('، ')}</td>
-          <td>${getPeriodShort(act.period)}</td>
           <td>${formatTimeRange(act.start, act.end)}</td>
           <td>${escapeHtml(act.room)}</td>
           <td><div class="actions">
@@ -495,7 +463,6 @@ function formatTimeRange(start, end) {
         tr.innerHTML = `
           <td>${idx + 1}</td>
           <td>${act.days.map(getDayLabel).join('، ')}</td>
-          <td>${getPeriodShort(act.period)}</td>
           <td>${formatTimeRange(act.start, act.end)}</td>
           <td>${escapeHtml(act.room)}</td>
           <td><div class="actions">
@@ -514,7 +481,6 @@ function formatTimeRange(start, end) {
     el.startTime.value = '';
     el.endTime.value = '';
     document.querySelectorAll('#daysGrid input[type="checkbox"]').forEach((cb) => { cb.checked = false; });
-    document.querySelector('input[name="period"][value="am"]').checked = true;
     updateFormVisibility();
   }
 
@@ -546,7 +512,6 @@ function formatTimeRange(start, end) {
       course: el.activityType.value === 'lecture' ? el.courseName.value.trim() : '',
       room: el.roomNumber.value.trim(),
       days: getSelectedDays(),
-      period: getSelectedPeriod(),
       start: el.startTime.value,
       end: el.endTime.value,
     };
@@ -558,7 +523,6 @@ function formatTimeRange(start, end) {
       if (a.type !== newAct.type) return false;
       if (a.course !== newAct.course) return false;
       if (a.room !== newAct.room) return false;
-      if (a.period !== newAct.period) return false;
       if (a.start !== newAct.start || a.end !== newAct.end) return false;
       if (a.days.length !== newAct.days.length) return false;
       const sortedA = a.days.slice().sort();
@@ -605,9 +569,6 @@ function formatTimeRange(start, end) {
     document.querySelectorAll('#daysGrid input[type="checkbox"]').forEach((cb) => {
       cb.checked = act.days.includes(cb.value);
     });
-
-    const periodRadio = document.querySelector(`input[name="period"][value="${act.period}"]`);
-    if (periodRadio) periodRadio.checked = true;
 
     updateFormVisibility();
     el.addBtn.textContent = t('saveEditBtn');
@@ -701,22 +662,20 @@ function formatTimeRange(start, end) {
           <td style="text-align:center">${i + 1}</td>
           <td style="text-align:center">${escapeHtml(a.course)}</td>
           <td style="text-align:center">${a.days.map(getDayLabel).join('، ')}</td>
-          <td style="text-align:center">${getPeriodLabel(a.period)}</td>
           <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
           <td style="text-align:center">${escapeHtml(a.room)}</td>
         </tr>`).join('')
-      : `<tr><td colspan="6" style="text-align:center;color:#888;padding:8px">${t('lecturesEmpty')}</td></tr>`;
+      : `<tr><td colspan="5" style="text-align:center;color:#888;padding:8px">${t('lecturesEmpty')}</td></tr>`;
 
     const officeRows = officeHours.length
       ? officeHours.map((a, i) => `
         <tr>
           <td style="text-align:center">${i + 1}</td>
           <td style="text-align:center">${a.days.map(getDayLabel).join('، ')}</td>
-          <td style="text-align:center">${getPeriodLabel(a.period)}</td>
           <td style="text-align:center; white-space:nowrap">${formatTimeRange(a.start, a.end)}</td>
           <td style="text-align:center">${escapeHtml(a.room)}</td>
         </tr>`).join('')
-      : `<tr><td colspan="5" style="text-align:center;color:#888;padding:8px">${t('officeEmpty')}</td></tr>`;
+      : `<tr><td colspan="4" style="text-align:center;color:#888;padding:8px">${t('officeEmpty')}</td></tr>`;
 
     const tableBase = `width:100%;border-collapse:collapse;font-family:${fontFamily};direction:${dir};font-size:10.5pt;table-layout:fixed;`;
     const thStyle = `background:#1b3a6b;color:#fff;padding:5px 8px;font-weight:700;border:1px solid #14305a;font-size:10.5pt;text-align:center;vertical-align:middle;`;
@@ -756,19 +715,17 @@ function formatTimeRange(start, end) {
       </div>
       <table style="${tableBase}">
         <colgroup>
-          <col style="width:5%" />
-          <col style="width:26%" />
-          <col style="width:17%" />
-          <col style="width:12%" />
-          <col style="width:22%" />
-          <col style="width:18%" />
+          <col style="width:6%" />
+          <col style="width:30%" />
+          <col style="width:20%" />
+          <col style="width:25%" />
+          <col style="width:19%" />
         </colgroup>
         <thead>
           <tr>
             <th style="${thStyle}">${t('thNum')}</th>
             <th style="${thStyle}">${t('thCourse')}</th>
             <th style="${thStyle}">${t('thDay')}</th>
-            <th style="${thStyle}">${t('thPeriod')}</th>
             <th style="${thStyle}">${t('thTime')}</th>
             <th style="${thStyle}">${t('thRoom')}</th>
           </tr>
@@ -781,17 +738,15 @@ function formatTimeRange(start, end) {
       </div>
       <table style="${tableBase}">
         <colgroup>
-          <col style="width:6%" />
-          <col style="width:24%" />
-          <col style="width:16%" />
-          <col style="width:30%" />
-          <col style="width:24%" />
+          <col style="width:8%" />
+          <col style="width:29%" />
+          <col style="width:34%" />
+          <col style="width:29%" />
         </colgroup>
         <thead>
           <tr>
             <th style="${thStyle}">${t('thONum')}</th>
             <th style="${thStyle}">${t('thODay')}</th>
-            <th style="${thStyle}">${t('thOPeriod')}</th>
             <th style="${thStyle}">${t('thOTime')}</th>
             <th style="${thStyle}">${t('thORoom')}</th>
           </tr>
@@ -927,11 +882,10 @@ function formatTimeRange(start, end) {
         tableHeader: true,
         children: [
           makeCell(t('thNum'), { header: true, width: 6 }),
-          makeCell(t('thCourse'), { header: true, width: 26 }),
-          makeCell(t('thDay'), { header: true, width: 17 }),
-          makeCell(t('thPeriod'), { header: true, width: 12 }),
-          makeCell(t('thTime'), { header: true, width: 21 }),
-          makeCell(t('thRoom'), { header: true, width: 18 }),
+          makeCell(t('thCourse'), { header: true, width: 30 }),
+          makeCell(t('thDay'), { header: true, width: 20 }),
+          makeCell(t('thTime'), { header: true, width: 25 }),
+          makeCell(t('thRoom'), { header: true, width: 19 }),
         ],
       });
 
@@ -940,7 +894,6 @@ function formatTimeRange(start, end) {
           makeCell(i + 1),
           makeCell(a.course),
           makeCell(a.days.map(getDayLabel).join('، ')),
-          makeCell(getPeriodLabel(a.period)),
           makeCell(formatTimeRange(a.start, a.end)),
           makeCell(a.room),
         ],
@@ -962,11 +915,10 @@ function formatTimeRange(start, end) {
       const officeHeader = new TableRow({
         tableHeader: true,
         children: [
-          makeCell(t('thONum'), { header: true, width: 7 }),
-          makeCell(t('thODay'), { header: true, width: 24 }),
-          makeCell(t('thOPeriod'), { header: true, width: 16 }),
-          makeCell(t('thOTime'), { header: true, width: 29 }),
-          makeCell(t('thORoom'), { header: true, width: 24 }),
+          makeCell(t('thONum'), { header: true, width: 8 }),
+          makeCell(t('thODay'), { header: true, width: 29 }),
+          makeCell(t('thOTime'), { header: true, width: 34 }),
+          makeCell(t('thORoom'), { header: true, width: 29 }),
         ],
       });
 
@@ -974,7 +926,6 @@ function formatTimeRange(start, end) {
         children: [
           makeCell(i + 1),
           makeCell(a.days.map(getDayLabel).join('، ')),
-          makeCell(getPeriodLabel(a.period)),
           makeCell(formatTimeRange(a.start, a.end)),
           makeCell(a.room),
         ],
